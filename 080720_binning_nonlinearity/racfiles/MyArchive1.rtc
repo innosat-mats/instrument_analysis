@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<AnubisArchive_TableOfContents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ArchiveName>MyArchive1</ArchiveName>
+  <ArchiveType>CCSDS_Packets</ArchiveType>
+  <ArchiveVersion>0.6.4</ArchiveVersion>
+  <NumberOfArchiveFiles>1</NumberOfArchiveFiles>
+  <TotalNumberOfDataUnits>39607</TotalNumberOfDataUnits>
+  <ArchiveFiles>
+    <File>
+      <SequenceNumber>1</SequenceNumber>
+      <FileName>.\MyArchive1_20200708-114404_20200708-135227.rac</FileName>
+      <NumberOfDataUnits>39607</NumberOfDataUnits>
+      <FirstDataUnitUTC>2020-07-08 11:44:05.221</FirstDataUnitUTC>
+      <LastDataUnitUTC>2020-07-08 13:52:27.232</LastDataUnitUTC>
+      <ContentSpecification>
+        <DataGroup>
+          <StreamNumber>17</StreamNumber>
+          <SCID>558</SCID>
+          <VirtualChannels>
+            <VCID>0</VCID>
+          </VirtualChannels>
+          <Applications>
+            <APID>100</APID>
+          </Applications>
+        </DataGroup>
+      </ContentSpecification>
+      <ArchiveTags />
+    </File>
+  </ArchiveFiles>
+</AnubisArchive_TableOfContents>
