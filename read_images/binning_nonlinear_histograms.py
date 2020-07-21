@@ -22,17 +22,18 @@ from read_in_functions import read_CCDitem_from_imgview, readimageviewpics
 from L1_calibration_functions import get_true_image_remove, desmear_true_image_remove, desmear_true_image
 import copy
 
+
 def bin_ref(ref, ccd):
     
-        ## simple code for binning, does not take into consideration images where
-        ## bad columns or rows have been omitted.
+        # simple code for binning
+        
         nrow, ncol, nrskip, ncskip, nrbin, ncbin = (ccd['NROW'], ccd['NCOL']+1,
                 ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'])
         
         nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr = (ref['NROW'], ref['NCOL']+1,
                 ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'])
     
-        # reference image that will be binned according to ccd
+        # reference image that will be binned according to 'ccd' settings
         imgref = ref['IMAGE']
         
         # in case reference image is already a binned image
@@ -63,15 +64,15 @@ def bin_ref(ref, ccd):
 
 def bin_ref_FPGA(ref, ccd):
     
-        ## simple code for binning, does not take into consideration images where
-        ## bad columns or rows have been omitted.
+        # simple code for binning 
+        
         nrow, ncol, nrskip, ncskip, nrbin, ncbin = (ccd['NROW'], ccd['NCOL']+1,
                 ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], 2**ccd['NColBinFPGA'])
         
         nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr = (ref['NROW'], ref['NCOL']+1,
                 ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], 2**ref['NColBinFPGA'])
     
-        # reference image that will be binned according to ccd
+        # reference image that will be binned according to 'ccd' settings
         imgref = ref['IMAGE']
         
         # in case reference image is already a binned image
@@ -104,12 +105,13 @@ def img_diff(image1, image2):
 
 
 
+####################################################
+#############        LOAD DATA      ################
+####################################################
+
+
 cal_day = '/080720_binning_nonlinearity'
 #cal_day = '/20200713BinningTest'
-
-####################################################
-############# Load Reference Images ################
-####################################################
 
 dirname = ('/Users/bjorn/Documents/PhD/MATS/calibration'+ cal_day 
                 + '/PayloadImages')
@@ -119,14 +121,15 @@ os.chdir(dirname)
 CCDitems = []
 binned = []
 
-#list_names = ['row.txt', 'column.txt', 'fpga.txt']
 
-itemlist = np.genfromtxt('row.txt', dtype='str')
-#itemlist = np.genfromtxt('column.txt', dtype='str')
-#itemlist = np.genfromtxt('column_11.txt', dtype='str')
-#itemlist = np.genfromtxt('exposure.txt', dtype='str')
-#itemlist = np.genfromtxt('fpga.txt', dtype='str')
+# list containing file names of binning tests
+list_name='row.txt'
+# list_name='column.txt'
+# list_name='fpga.txt'
+# list_name='exposure.txt'
+# list_name='column_11.txt'
 
+itemlist = np.genfromtxt(list_name, dtype='str')
 
        
 for line in itemlist:
@@ -134,21 +137,15 @@ for line in itemlist:
         
     CCDitems.append(CCD)
 
-label = 'shutter'
-# k = 0 on chip cbin, k=12 row bin, k=24 fpga
-k=12
-
 CCDd_list = np.copy(CCDitems[0::2])
 CCDs_list = np.copy(CCDitems[1::2])
 
-# plot the obtained images
-
+# plot the raw images
 fig, axs = plt.subplots(2,len(CCDd_list), figsize=(15, 6), facecolor='w', edgecolor='k')
 fig.subplots_adjust(hspace = 1, wspace=.001)
 axs = axs.ravel()
 fig.suptitle('images')
   
-# LOOP TO PLOT IMAGES
 for i in range(0,len(CCDd_list)):
     im = axs[i].imshow(CCDd_list[i]['IMAGE'],cmap='jet')
     mean=CCDd_list[i]['IMAGE'].mean()
@@ -171,15 +168,14 @@ CCDs_sub_img = []
 
 for i in range(0,len(CCDd_list)):
 
-    #CCDns_sub_img.append(img_diff(CCDns_list[i]['IMAGE'].copy(), CCDd_list[i]['IMAGE'].copy()))
     CCDs_sub_img.append(img_diff(CCDs_list[i]['IMAGE'].copy(), CCDd_list[i]['IMAGE'].copy()))
-    
+
+# plot the images with removed dark current    
 fig1, axs1 = plt.subplots(1,len(CCDd_list), figsize=(15, 6), facecolor='w', edgecolor='k')
 fig1.subplots_adjust(hspace = 1, wspace=.001)
 axs1 = axs1.ravel()
 fig1.suptitle('images with subtracted dark images')
 
-# LOOP TO PLOT IMAGES
 for i in range(0,len(CCDd_list)):
     im = axs1[i].imshow(CCDs_sub_img[i],cmap='jet')
     mean=CCDs_sub_img[i].mean()
@@ -193,42 +189,43 @@ for i in range(0,len(CCDd_list)):
 
 # BINNING
 
-if label == 'shutter':
-    bin_input = copy.deepcopy(CCDs_list)
-    ref = copy.deepcopy(CCDs_list[0])
-    ref['IMAGE'] = CCDs_sub_img[0].copy()
+# copy settings from bright image
+bin_input = copy.deepcopy(CCDs_list)
 
-    for i in range(0,len(CCDd_list)): 
+# first CCD item is the reference that will be binned manually
+ref = copy.deepcopy(CCDs_list[0])
+ref['IMAGE'] = CCDs_sub_img[0].copy()
+
+# replace images with the images with subtrated dark
+for i in range(0,len(CCDd_list)): 
+    bin_input[i]['IMAGE'] = CCDs_sub_img[i].copy()
     
-        bin_input[i]['IMAGE'] = CCDs_sub_img[i].copy()
-    
 
-
+# create manually binned images
 for i in range(0,len(CCDd_list)): 
     
-    if k == 24:
+    if list_name == 'fpga.txt':
         binned.append(bin_ref_FPGA(copy.deepcopy(ref), bin_input[i].copy()))
     
     else:
         binned.append(bin_ref(copy.deepcopy(ref), bin_input[i].copy()))
 
-        
 
+# plot histograms of difference between instrument and manual bin        
 fig4, axs4 = plt.subplots(1,len(CCDd_list), figsize=(15, 6), facecolor='w', edgecolor='k')
 fig4.subplots_adjust(hspace = 1, wspace=.001)
 axs4 = axs4.ravel()
 
+# start and stop for plotting
 rstart, rstop = 1, -1
 cstart,cstop = 1, -1
 
+# bin (histogram) size
+binn = 30
+
 for i in range(0,len(CCDd_list)):
             
-    
-    if label == 'shutter':
-        ccdimg = CCDs_sub_img[i].copy()
-        
-    binn = 30
-    
+    ccdimg = CCDs_sub_img[i].copy()
     diff_img = ccdimg[rstart:rstop,cstart:cstop].copy()-binned[i][rstart:rstop,cstart:cstop].copy()
     
     meand = diff_img.mean()
@@ -244,38 +241,39 @@ for i in range(0,len(CCDd_list)):
     fig4.suptitle('histogram of instrument-manual')
     
 
+# plot histograms of manual and instrument bins
 fig3, axs3 = plt.subplots(3,len(CCDd_list), figsize=(15, 6), facecolor='w', edgecolor='k')
 fig3.subplots_adjust(hspace = 1, wspace=.001)
 axs3 = axs3.ravel()
 
+# start and stop for plotting
 rstart, rstop = 1, -1
 cstart,cstop = 1, -1
 
+# bin (histogram) size
+binn = 80
+
 for i in range(0,len(CCDd_list)):
-            
+        
+    ccdimg = CCDs_sub_img[i].copy()
     
-    if label == 'shutter':
-        ccdimg = CCDs_sub_img[i].copy()
-        
-        if k == 0:
-            fig3.suptitle('manual binning of shutter images (dark image subtracted) (on-chip column bin)')
-        
-        if k == 12:
-            fig3.suptitle('manual binning of shutter images (dark image subtracted)')
-            
-        if k == 24:
-            fig3.suptitle('manual binning of shutter images (dark image subtracted) (FPGA)')
-        
+    if list_name == 'column.txt':
+        fig3.suptitle('manual binning of shutter images (dark image subtracted) (on-chip column bin)')
     
+    if list_name == 'row.txt':
+        fig3.suptitle('manual binning of shutter images (dark image subtracted)')
         
-    #print(ccdimg)
+    if list_name == 'fpga.txt':
+        fig3.suptitle('manual binning of shutter images (dark image subtracted) (FPGA)')
+        
+
     meanb = binned[i].mean()
     stdb = binned[i].std()
     
     meanc = ccdimg.mean()
     stdc = ccdimg.std()
     
-    binn = 80
+    
 
     axs3[i].hist(binned[i][rstart:rstop,cstart:cstop].ravel(),range=(meanb-3*stdb,meanb+3*stdb), bins=binn, alpha=0.6,
                 color = "skyblue", label='manual', density=True)

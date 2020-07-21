@@ -25,15 +25,15 @@ import copy
 
 def bin_ref(ref, ccd):
     
-        ## simple code for binning, does not take into consideration images where
-        ## bad columns or rows have been omitted.
+        # simple code for binning
+        
         nrow, ncol, nrskip, ncskip, nrbin, ncbin = (ccd['NROW'], ccd['NCOL']+1,
                 ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'])
         
         nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr = (ref['NROW'], ref['NCOL']+1,
                 ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'])
     
-        # reference image that will be binned according to ccd
+        # reference image that will be binned according to 'ccd' settings
         imgref = ref['IMAGE']
         
         # in case reference image is already a binned image
@@ -64,15 +64,15 @@ def bin_ref(ref, ccd):
 
 def bin_ref_FPGA(ref, ccd):
     
-        ## simple code for binning, does not take into consideration images where
-        ## bad columns or rows have been omitted.
+        # simple code for binning 
+        
         nrow, ncol, nrskip, ncskip, nrbin, ncbin = (ccd['NROW'], ccd['NCOL']+1,
                 ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], 2**ccd['NColBinFPGA'])
         
         nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr = (ref['NROW'], ref['NCOL']+1,
                 ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], 2**ref['NColBinFPGA'])
     
-        # reference image that will be binned according to ccd
+        # reference image that will be binned according to 'ccd' settings
         imgref = ref['IMAGE']
         
         # in case reference image is already a binned image
@@ -106,11 +106,13 @@ def img_diff(image1, image2):
 
 
 cal_day = '/080720_binning_nonlinearity'
-#cal_day = '/20200713BinningTest'
 
+# this is the reference exposure time (s)
 ref_time = 4
+
+# list containing file names of exposure time tests
 list_exposure = 'exposure.txt'
-#list_exposure = 'exposure_11.txt'
+
 
 
 ####################################################
@@ -127,9 +129,11 @@ meanc_row, meanc_column, meanc_fpga = [],[],[]
 bins_row, bins_column, bins_fpga = [], [], []
 means_row, means_column, means_fpga, means_exp = [],[],[],[]
 
+
+# lists containing file names of binning tests
 list_names = ['row.txt', 'column.txt', 'fpga.txt']
-#list_names = ['row_11.txt', 'column_11.txt', 'fpga.txt']
-#list_names = ['column.txt']
+
+
 
 for list_name in list_names:
     
@@ -137,19 +141,12 @@ for list_name in list_names:
     binned = []
     
     itemlist = np.genfromtxt(list_name, dtype='str')
-
-    if list_name == 'fpga.txt':
-        k = 24
-    else:
-        k = 0
            
     for line in itemlist:
         
         CCD = read_CCDitem_from_imgview(dirname, line)
             
         CCDitems.append(copy.deepcopy(CCD))
-    
-    label = 'shutter'
     
     CCDd_list = copy.deepcopy(CCDitems[0::2])
     CCDs_list = copy.deepcopy(CCDitems[1::2])
@@ -159,50 +156,42 @@ for list_name in list_names:
     CCDs_sub_img = []
     
     for i in range(0,len(CCDd_list)):
-    
         CCDs_sub_img.append(img_diff(CCDs_list[i]['IMAGE'].copy(), CCDd_list[i]['IMAGE'].copy()))
 
-    
     # BINNING
     
-    if label == 'shutter':
-        bin_input = copy.deepcopy(CCDs_list)
-        ref = copy.deepcopy(CCDs_list[0])
-        ref['IMAGE'] = CCDs_sub_img[0].copy()
+    # copy settings from bright image
+    bin_input = copy.deepcopy(CCDs_list)
     
-        for i in range(0,len(CCDd_list)): 
+    # first CCD item is the reference that will be binned manually
+    ref = copy.deepcopy(CCDs_list[0])
+    ref['IMAGE'] = CCDs_sub_img[0].copy()
+
+    # replace images with the images with subtrated dark
+    for i in range(0,len(CCDd_list)): 
+        bin_input[i]['IMAGE'] = CCDs_sub_img[i].copy()
         
-            bin_input[i]['IMAGE'] = CCDs_sub_img[i].copy()
-        
-    
-    
+    # create manually binned images
     for i in range(0,len(CCDd_list)): 
         
-        if k == 24:
+        if list_name == 'fpga.txt':
             binned.append(bin_ref_FPGA(copy.deepcopy(ref), copy.deepcopy(bin_input[i])))
         
         else:
             binned.append(bin_ref(copy.deepcopy(ref), copy.deepcopy(bin_input[i])))
     
     
+    # calculate means and arrays for plotting
     for i in range(0,len(CCDd_list)):
         
-        
-        if label == 'shutter':
-            ccdimg = CCDs_sub_img[i].copy()
-
-        #print(ccdimg)
-        
-        #stdb = binned[i].std()
-        #stdc = ccdimg.std()
-        
-
+        ccdimg = CCDs_sub_img[i].copy()
         
         if list_name == 'fpga.txt':
             meanb_fpga.append(binned[i].mean())
             meanc_fpga.append(ccdimg.mean())
             bins_fpga.append(2**bin_input[i]['NColBinFPGA'])
             
+            # with dark
             means_fpga.append(CCDs_list[i]['IMAGE'].mean())
             
 
@@ -211,6 +200,7 @@ for list_name in list_names:
             meanc_row.append(ccdimg.mean())
             bins_row.append(bin_input[i]['NRBIN'])
             
+            # with dark
             means_row.append(CCDs_list[i]['IMAGE'].mean())
 
             
@@ -219,9 +209,11 @@ for list_name in list_names:
             meanc_column.append(ccdimg.mean())
             bins_column.append(bin_input[i]['NColBinCCD'])
             
+            # with dark
             means_column.append(CCDs_list[i]['IMAGE'].mean())
 
 
+# convert to numpy arrays
 meanb_fpga = np.array(meanb_fpga)
 meanc_fpga = np.array(meanc_fpga)
 
@@ -232,26 +224,20 @@ meanb_row = np.array(meanb_row)
 meanc_row = np.array(meanc_row)
         
 
-### LOAD EXP IMAGES
+# EXPOSURE TIME TESTS
 
 CCDitems = []
-
 itemlist = np.genfromtxt(list_exposure, dtype='str')
 
-       
 for line in itemlist:
-    
     CCD = read_CCDitem_from_imgview(dirname, line)
-        
     CCDitems.append(copy.deepcopy(CCD))
-
-label = 'shutter'
 
 CCDd_list = copy.deepcopy(CCDitems[0::2])
 CCDs_list = copy.deepcopy(CCDitems[1::2])
 
+# SUBTRACT DARK IMAGES
 
-# SUBTRACT DARK IMAGES & ADD EXP TIMES
 CCDs_sub_img, exp_times = [], []
 mean_exp = []
 
@@ -261,30 +247,23 @@ for i in range(0,len(CCDd_list)):
     exp_times.append(CCDs_list[i]['TEXPMS'])
     mean_exp.append(CCDs_sub_img[i].mean())
     
+    # with dark
     means_exp.append(CCDs_list[i]['IMAGE'].mean())
-    
+
+# convert to numpy arrays    
 exp_times = np.array(exp_times)
 mean_exp = np.array(mean_exp)
+
+# convert from TEXPMS to actual exposure time (s)
 exp_times = ((exp_times - 2000)/1000)
 exp_times = exp_times.astype(int)
 
+# estimate linear response to increased exposure time
 mult_exp = CCDs_sub_img[1].mean() * exp_times.copy()/4
 
 
 
-# coef = np.polyfit(bins_fpga,meanb_fpga,1)
-# poly1d_fn = np.poly1d(coef) 
-
-# coef = np.polyfit(bins_fpga,meanc_fpga,1)
-# poly1d_fn = np.poly1d(coef) 
-
-# coef = np.polyfit(bins_row,meanb_row,1)
-# poly1d_fn = np.poly1d(coef) 
-
-# coef = np.polyfit(bins_row,meanc_row,1)
-# poly1d_fn = np.poly1d(coef) 
-
-
+# for removing any saturated measurements
 
 bins_fpga = bins_fpga[0:-1]
 meanc_fpga = meanc_fpga[0:-1]
@@ -301,9 +280,17 @@ meanc_row = meanc_row[0:-1]
 meanb_row = meanb_row[0:-1]
 means_row = means_row[0:-1]
 
+
+
+####################################################
+############# PLOTTING AND FITTING  ################
+####################################################
+
+# marker size
 msize = 12
 
 plt.figure(1)    
+
 
 coef = np.polyfit(bins_fpga,meanc_fpga,1)
 print(coef)
