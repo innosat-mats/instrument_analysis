@@ -5,6 +5,7 @@ import pytest
 
 def test_ccd():
     """Tests that CCD is correctly generated"""
+    # pylint: disable=no-member
     with pytest.raises(TypeError):
         ccd = simulation.CCD()
 
