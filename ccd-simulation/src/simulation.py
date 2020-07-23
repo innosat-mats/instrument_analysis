@@ -19,7 +19,7 @@ class CCD:
         self.image[0:-1, :] = self.image[1:, :]
         self.image[-1, :].fill(0)
 
-    def clock_cloumn(self):
+    def clock_column(self):
         self.well = self.well + self.shift_register[0, 0]
         self.shift_register[0, 0:-1] = self.shift_register[0, 1:]
         self.shift_register[0, -1] = 0
@@ -44,12 +44,15 @@ class CCD:
         out_image = np.zeros([nrow, ncol])
 
         for i in range(nrow):
+            self.reset_shift_register()
+
             for _ in range(nrbin):
-                self.reset_shift_register()
                 self.clock_row()
+
             for j in range(ncol):
-                for _ in range(nrbin):
-                    self.clock_cloumn()
+
+                for _ in range(ncbin):
+                    self.clock_column()
 
                 value = self.read_well()
                 out_image[i, j] = value
@@ -62,3 +65,7 @@ class CCD:
         else:
             self.image = image
 
+    def reset_ccd(self):
+        self.image = np.zeros([self.rows, self.columns])
+        self.shift_register = np.zeros([1, self.columns])
+        self.well = 0

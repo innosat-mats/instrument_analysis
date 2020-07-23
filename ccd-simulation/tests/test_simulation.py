@@ -42,13 +42,13 @@ def test_col_summation():
 
     ccd.clock_row()
 
-    ccd.clock_cloumn()
+    ccd.clock_column()
     assert ccd.well == 1
     test_array = np.ones([1, columns])
     test_array[0, -1] = 0
     assert np.array_equal(ccd.shift_register, test_array)
 
-    ccd.clock_cloumn()
+    ccd.clock_column()
     assert ccd.well == 2
     test_array = np.ones([1, columns])
     test_array[0, -2:] = 0
@@ -66,8 +66,8 @@ def test_row_and_col_summation():
 
     ccd.clock_row()
     ccd.clock_row()
-    ccd.clock_cloumn()
-    ccd.clock_cloumn()
+    ccd.clock_column()
+    ccd.clock_column()
 
     assert ccd.well == 4
 
@@ -84,6 +84,8 @@ def test_ccd_read():
     ccd.set_image(np.ones([rows, columns]))
 
     assert np.array_equal(ccd.get_image(), np.ones([rows, columns]))
+    assert np.array_equal(ccd.image, np.zeros([rows, columns]))
+    assert np.array_equal(ccd.shift_register, np.zeros([1, columns]))
 
 
 def test_read_well():
@@ -98,17 +100,20 @@ def test_binning():
     rows = 10
     columns = 20
     ccd = simulation.CCD(rows, columns)
+
     ccd.set_image(np.ones([rows, columns]))
+    out_image = ccd.get_image(nrow=5, nrskip=0, nrbin=2, ncol=10, ncskip=0, ncbin=1)
+    assert np.array_equal(out_image, np.ones([5, 10]) * 2)
 
-    out_image = ccd.get_image(nrow=5, nrskip=0, nrbin=2, ncol=20, ncskip=0, ncbin=1)
-    assert np.array_equal(out_image, np.ones([5, 20]) * 2)
-
+    ccd.set_image(np.ones([rows, columns]))
     out_image = ccd.get_image(nrow=10, nrskip=0, nrbin=1, ncol=10, ncskip=0, ncbin=2)
     assert np.array_equal(out_image, np.ones([10, 10]) * 2)
 
-    out_image = ccd.get_image(nrow=5, nrskip=0, nrbin=2, ncol=10, ncskip=0, ncbin=2)
-    assert np.array_equal(out_image, np.ones([5, 10]) * 4)
+    ccd.set_image(np.ones([rows, columns]))
+    out_image = ccd.get_image(nrow=4, nrskip=0, nrbin=2, ncol=8, ncskip=0, ncbin=2)
+    assert np.array_equal(out_image, np.ones([4, 8]) * 4)
 
+    ccd.set_image(np.ones([rows, columns]))
     out_image = ccd.get_image(nrow=4, nrskip=0, nrbin=2, ncol=6, ncskip=0, ncbin=2)
     assert np.array_equal(out_image, np.ones([4, 6]) * 4)
 
