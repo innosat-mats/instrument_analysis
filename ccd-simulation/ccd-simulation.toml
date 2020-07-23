@@ -1,4 +1,4 @@
-# pyproject.toml
+# ccd-simulation.toml
 [tool.pytest.ini_options]
 minversion = "6.0.0rc1"
 addopts = "-ra -q"
