@@ -4,8 +4,7 @@ python:
   - "3.7"
 # command to install dependencies
 install:
-  - cd ccd-simulation
-  - pip install -r requirements.txt
+  - pip install -r ./ccd-simulation/requirements.txt
 # command to run tests
 script:
   - cd ccd-simulation
