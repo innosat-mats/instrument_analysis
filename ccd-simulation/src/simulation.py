@@ -14,12 +14,14 @@ class CCD:
     def size(self):
         return self.rows, self.columns
 
-    def clock_row(self):
+    def clock_row(self, pixel_loss=1):
+        self.image = self.image * pixel_loss
         self.shift_register = self.shift_register + self.image[0, :]
         self.image[0:-1, :] = self.image[1:, :]
         self.image[-1, :].fill(0)
 
-    def clock_column(self):
+    def clock_column(self, pixel_loss=1):
+        self.shift_register = self.shift_register * pixel_loss
         self.well = self.well + self.shift_register[0, 0]
         self.shift_register[0, 0:-1] = self.shift_register[0, 1:]
         self.shift_register[0, -1] = 0
@@ -33,7 +35,15 @@ class CCD:
         return value
 
     def get_image(
-        self, nrow=None, nrskip=0, nrbin=1, ncol=None, ncskip=0, ncbin=1,
+        self,
+        nrow=None,
+        nrskip=0,
+        nrbin=1,
+        ncol=None,
+        ncskip=0,
+        ncbin=1,
+        pixel_loss_row=1,
+        pixel_loss_column=1,
     ):
 
         if nrow is None:
@@ -47,12 +57,12 @@ class CCD:
             self.reset_shift_register()
 
             for _ in range(nrbin):
-                self.clock_row()
+                self.clock_row(pixel_loss=pixel_loss_row)
 
             for j in range(ncol):
 
                 for _ in range(ncbin):
-                    self.clock_column()
+                    self.clock_column(pixel_loss=pixel_loss_column)
 
                 value = self.read_well()
                 out_image[i, j] = value

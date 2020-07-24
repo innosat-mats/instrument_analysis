@@ -5,8 +5,8 @@ import pytest
 
 def test_ccd():
     """Tests that CCD is correctly generated"""
-    # pylint: disable=no-member
     with pytest.raises(TypeError):
+        # pylint: disable=no-value-for-parameter
         ccd = simulation.CCD()
 
     rows = 10
@@ -117,3 +117,33 @@ def test_binning():
     out_image = ccd.get_image(nrow=4, nrskip=0, nrbin=2, ncol=6, ncskip=0, ncbin=2)
     assert np.array_equal(out_image, np.ones([4, 6]) * 4)
 
+
+def test_real_binning():
+    rows = 1
+    columns = 1
+    ccd = simulation.CCD(rows, columns)
+
+    ccd.set_image(np.ones([rows, columns]))
+    out_image = ccd.get_image(
+        nrow=1, nrskip=0, nrbin=1, ncol=1, ncskip=0, ncbin=1, pixel_loss_row=1
+    )
+    assert np.array_equal(out_image, np.ones([1, 1]))
+
+    ccd.set_image(np.ones([rows, columns]))
+    out_image = ccd.get_image(
+        nrow=1, nrskip=0, nrbin=1, ncol=1, ncskip=0, ncbin=1, pixel_loss_row=0.9
+    )
+    assert np.array_equal(out_image, np.ones([1, 1]) * 0.9)
+
+    ccd.set_image(np.ones([rows, columns]))
+    out_image = ccd.get_image(
+        nrow=1,
+        nrskip=0,
+        nrbin=1,
+        ncol=1,
+        ncskip=0,
+        ncbin=1,
+        pixel_loss_row=1,
+        pixel_loss_column=0.9,
+    )
+    assert np.array_equal(out_image, np.ones([1, 1]) * 0.9)
