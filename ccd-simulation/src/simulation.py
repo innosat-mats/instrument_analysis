@@ -16,13 +16,13 @@ class CCD:
 
     def clock_row(self, pixel_loss=1):
         self.image = self.image * pixel_loss
-        self.shift_register = self.shift_register + self.image[0, :]
+        self.shift_register = self.shift_register * pixel_loss + self.image[0, :]
         self.image[0:-1, :] = self.image[1:, :]
         self.image[-1, :].fill(0)
 
     def clock_column(self, pixel_loss=1):
         self.shift_register = self.shift_register * pixel_loss
-        self.well = self.well + self.shift_register[0, 0]
+        self.well = self.well * pixel_loss + self.shift_register[0, 0]
         self.shift_register[0, 0:-1] = self.shift_register[0, 1:]
         self.shift_register[0, -1] = 0
 
