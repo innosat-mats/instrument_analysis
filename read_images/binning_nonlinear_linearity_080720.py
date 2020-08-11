@@ -9,8 +9,8 @@ Created on Mon Jun 15 12:23:19 2020
 
 
 import sys
-sys.path.append('/Users/bjorn/Documents/PhD/MATS/calibration/MATS-L0-processing')
-sys.path.append('/Users/bjorn/Documents/PhD/MATS/calibration/read_images')
+sys.path.append('/home/olemar/Projects/MATS/MATS-L0-processing')
+sys.path.append('/home/olemar/Projects/MATS/instrument_analysis/read_images')
 
 import os
 import glob
@@ -119,8 +119,7 @@ list_exposure = 'exposure.txt'
 ############# Load Reference Images ################
 ####################################################
 
-dirname = ('/Users/bjorn/Documents/PhD/MATS/calibration'+ cal_day 
-                + '/PayloadImages')
+dirname = ('/home/olemar/Projects/MATS/MATS-data/PayloadImages_200807_2')
 
 os.chdir(dirname)
 

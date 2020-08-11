@@ -9,8 +9,8 @@ Created on Mon Jun 15 12:23:19 2020
 
 
 import sys
-sys.path.append('/Users/bjorn/Documents/PhD/MATS/calibration/MATS-L0-processing')
-sys.path.append('/Users/bjorn/Documents/PhD/MATS/calibration/read_images')
+sys.path.append('/home/olemar/Projects/MATS/MATS-L0-processing')
+sys.path.append('/home/olemar/Projects/MATS/instrument_analysis/read_images')
 
 import os
 import glob
@@ -113,10 +113,13 @@ def img_diff(image1, image2):
 ####################################################
 
 
-cal_day = '/070820_scripttest'
+#cal_day = '/070820_scripttest'
+# type of binning 
+binning_type = 'column'
+#binning_type = 'row'
+#binning_type = 'fpga'
 
-dirname = ('/Users/bjorn/Documents/PhD/MATS/calibration/binning'+ cal_day 
-                + '/PayloadImages')
+dirname = ('/home/olemar/Projects/MATS/MATS-data/binning_test_channel_1/' + binning_type)
 
 CCDitems=[]
 IDstrings=[]
@@ -129,24 +132,18 @@ for file in glob.glob("*.pnm"):
     IDstrings.append(file.strip('.pnm'))
     
 # sort by time
-IDstrings = sorted(IDstrings)
+IDstrings.sort(key=int)
 
 for IDstring in IDstrings:    
     CCD = read_CCDitem_from_imgview(dirname, IDstring)
     CCDitems.append(CCD)    
 
-# type of binning 
-binning_type = 'column'
-#binning_type = 'row'
-#binning_type = 'fpga'
 
 # long exposure, short exposure, new reference images
-CCDl_list = np.copy(CCDitems[0::3])
-CCDs_list = np.copy(CCDitems[1::3])
-CCDr_list = np.copy(CCDitems[2::3])
-# CCDrs_list = np.copy(CCDitems[3::4]) reference short (never binned)
-
-
+CCDl_list = np.copy(CCDitems[0::4])
+CCDs_list = np.copy(CCDitems[1::4])
+CCDr_list = np.copy(CCDitems[2::4])
+CCDrs_list = np.copy(CCDitems[3::4]) #reference short (never binned)
 
 ####################################################
 #############       PLOTTING 1   ##################
@@ -181,9 +178,11 @@ CCDl_sub_img,CCDr_sub_img = [],[]
 
 for i in range(0,len(CCDs_list)):
     
+    print(i)
+    
     # subtract dark current from both long and references
     CCDl_sub_img.append(img_diff(CCDl_list[i]['IMAGE'].copy(), CCDs_list[i]['IMAGE'].copy()))
-    CCDr_sub_img.append(img_diff(CCDr_list[i]['IMAGE'].copy(), CCDs_list[i]['IMAGE'].copy())) # update
+    CCDr_sub_img.append(img_diff(CCDr_list[i]['IMAGE'].copy(), CCDrs_list[i]['IMAGE'].copy())) # update
 
 # plot the images with removed dark current    
 fig1, axs1 = plt.subplots(1,len(CCDs_list), figsize=(15, 6), facecolor='w', edgecolor='k')

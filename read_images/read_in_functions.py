@@ -18,7 +18,7 @@ from PIL import Image
 # some_file.py
 import sys
 # insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, '/Users/lindamegner/MATS/retrieval/Level0/MATS-L0-processing-master')
+#sys.path.insert(1, '/Users/lindamegner/MATS/retrieval/Level0/MATS-L0-processing-master')
 
 import imagereader as imagereader
 def readimageviewpic(dirname,picnr,rawflag):
