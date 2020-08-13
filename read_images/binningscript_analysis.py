@@ -30,12 +30,13 @@ def bin_ref(ref, ccd):
     
         # simple code for binning
         
-        nrow, ncol, nrskip, ncskip, nrbin, ncbin = (ccd['NROW'], ccd['NCOL']+1,
-                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'])
+        nrow, ncol, nrskip, ncskip, nrbin, ncbin, exptime = (ccd['NROW'], ccd['NCOL']+1,
+                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'],ccd['TEXPMS'])
         
-        nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr = (ref['NROW'], ref['NCOL']+1,
-                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'])
+        nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr, exptimer = (ref['NROW'], ref['NCOL']+1,
+                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'],ref['TEXPMS'])
     
+        exptimefactor = int((exptime-2000)/(exptimer-2000))
         # reference image that will be binned according to 'ccd' settings
         imgref = ref['IMAGE']
         
@@ -55,7 +56,9 @@ def bin_ref(ref, ccd):
             
             for j in range(0,nrow):
                 binned[j,:] = colbin[j*nrbin:(j+1)*nrbin,:].sum(axis=0)
-           
+                
+            
+            binned = binned*exptimefactor
             return binned
 
         else:
@@ -68,13 +71,13 @@ def bin_ref(ref, ccd):
 def bin_ref_FPGA(ref, ccd):
     
         # simple code for binning 
+        nrow, ncol, nrskip, ncskip, nrbin, ncbin, exptime = (ccd['NROW'], ccd['NCOL']+1,
+                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'],ccd['TEXPMS'])
         
-        nrow, ncol, nrskip, ncskip, nrbin, ncbin = (ccd['NROW'], ccd['NCOL']+1,
-                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], 2**ccd['NColBinFPGA'])
-        
-        nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr = (ref['NROW'], ref['NCOL']+1,
-                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], 2**ref['NColBinFPGA'])
+        nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr, exptimer = (ref['NROW'], ref['NCOL']+1,
+                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'],ref['TEXPMS'])
     
+        exptimefactor = int((exptime-2000)/(exptimer-2000))
         # reference image that will be binned according to 'ccd' settings
         imgref = ref['IMAGE']
         
@@ -95,6 +98,7 @@ def bin_ref_FPGA(ref, ccd):
             for j in range(0,nrow):
                 binned[j,:] = colbin[j*nrbin:(j+1)*nrbin,:].sum(axis=0)
            
+            binned = binned*exptimefactor
             return binned
 
         else:
@@ -113,13 +117,14 @@ def img_diff(image1, image2):
 ####################################################
 
 
-#cal_day = '/070820_scripttest'
+cal_day = '20200812'
 # type of binning 
-binning_type = 'column'
+channel = 5
+#binning_type = 'column'
 #binning_type = 'row'
-#binning_type = 'fpga'
+binning_type = 'exptime'
 
-dirname = ('/home/olemar/Projects/MATS/MATS-data/binning_test_channel_1/' + binning_type)
+dirname = ('/home/olemar/Projects/MATS/MATS-data/binning_test_channel_'  + str(channel) + '_' + cal_day + '/' + binning_type)
 
 CCDitems=[]
 IDstrings=[]
