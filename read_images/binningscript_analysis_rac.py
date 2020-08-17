@@ -18,8 +18,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from LindasCalibrationFunctions import plotCCDitem
 from LindasCalibrationFunctions import plot_simple
-from read_in_functions import read_CCDitem_from_imgview, readimageviewpics
-from L1_calibration_functions import get_true_image_remove, desmear_true_image_remove, desmear_true_image
+from read_in_functions import read_CCDitem_from_imgview, readimageviewpics,read_MATS_image
+from L1_calibration_functions import desmear_true_image
 import copy
 
 
@@ -117,15 +117,13 @@ def img_diff(image1, image2):
 ####################################################
 
 
-cal_day = '20200812'
 # type of binning 
 channel = 5
 #binning_type = 'column'
 #binning_type = 'row'
 binning_type = 'exptime'
 
-dirname = ('/home/olemar/Projects/MATS/MATS-data/binning_test_channel_'  + str(channel) + '_' + cal_day + '/' + binning_type)
-
+dirname = ('/home/olemar/Projects/MATS/MATS-data/binning_test_20200812_racfiles/binning/')
 CCDitems=[]
 IDstrings=[]
 binned=[]
@@ -133,15 +131,7 @@ binned=[]
 
 os.chdir(dirname)
 
-for file in glob.glob("*.pnm"):
-    IDstrings.append(file.strip('.pnm'))
-    
-# sort by time
-IDstrings.sort(key=int)
-
-for IDstring in IDstrings:    
-    CCD = read_CCDitem_from_imgview(dirname, IDstring)
-    CCDitems.append(CCD)    
+CCDitems = read_MATS_image(dirname)
 
 
 # long exposure, short exposure, new reference images
