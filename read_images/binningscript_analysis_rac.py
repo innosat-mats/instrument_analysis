@@ -117,7 +117,7 @@ def img_diff(image1, image2):
 
 def main():  # type of binning
 
-    for channel in range(1, 8):
+    for channel in range(7, 8):
 
         dirname = (
             '/home/olemar/Projects/MATS/MATS-data/binning_test_20200812_racfiles/binning/')
@@ -138,127 +138,173 @@ def main():  # type of binning
                 CCDitems_use.append(CCDitems[i])
 
         CCDitems = CCDitems_use
-        # long exposure, short exposure, new reference images
-        CCDl_list = np.copy(CCDitems[0::4])
-        CCDs_list = np.copy(CCDitems[1::4])
-        CCDr_list = np.copy(CCDitems[2::4])
-        CCDrs_list = np.copy(CCDitems[3::4])  # reference short (never binned)
 
-    # SUBTRACT DARK IMAGES
+        if np.mod(len(CCDitems), 4) != 0:
+            print('Tests incomplete for channel ' + str(channel))
+            pass
+        elif len(CCDitems) == 0:
+            print('No data for channel ' + str(channel))
+        else:
+            print('Running channel ' + str(channel))
 
-        CCDl_sub_img, CCDr_sub_img = [], []
-        test_type = np.array([])
-        for i in range(0, len(CCDs_list)):
+            CCDl_list = np.copy(CCDitems[0::4])  # long exposure
+            CCDs_list = np.copy(CCDitems[1::4])  # short exposure
+            CCDr_list = np.copy(CCDitems[2::4])  # new reference images
+            # reference short (not binned)
+            CCDrs_list = np.copy(CCDitems[3::4])
 
-            print(i)
-            if CCDl_list[i]['TEXPMS'] != CCDr_list[0]['TEXPMS']:
-                test_type = np.append(test_type, 'exp')
-            elif CCDl_list[i]['NCBIN CCDColumns'] != CCDr_list[0]['NCBIN CCDColumns']:
-                test_type = np.append(test_type, 'col')
-            elif CCDl_list[i]['NRBIN'] != CCDr_list[0]['NRBIN']:
-                test_type = np.append(test_type, 'row')
-            else:
-                test_type = np.append(test_type, 'ref')
-        #    subtract dark current from both long and references
-            CCDl_sub_img.append(
-                img_diff(CCDl_list[i]['IMAGE'].copy(), CCDs_list[i]['IMAGE'].copy()))
-            CCDr_sub_img.append(img_diff(
-                CCDr_list[i]['IMAGE'].copy(), CCDrs_list[i]['IMAGE'].copy()))  # update
+            # SUBTRACT DARK IMAGES
 
-        # # plot the images with removed dark current
-        # fig1, axs1 = plt.subplots(1, len(CCDs_list), figsize=(
-        #     15, 6), facecolor='w', edgecolor='k')
-        # fig1.subplots_adjust(hspace=1, wspace=.001)
-        # axs1 = axs1.ravel()
-        # fig1.suptitle('images with subtracted dark images')
+            CCDl_sub_img, CCDr_sub_img = [], []
+            test_type = np.array([])
+            for i in range(0, len(CCDs_list)):
 
-        # for i in range(0, len(CCDs_list)):
-        #     im = axs1[i].imshow(CCDl_sub_img[i], cmap='jet')
-        #     mean = CCDl_sub_img[i].mean()
-        #     std = CCDl_sub_img[i].std()
-        #     fig1.colorbar(im, ax=axs1[i])
-        #     im.set_clim(mean-2*std, mean+2*std)
-        #     axs1[i].set_title('long - short: ' + str(CCDs_list[i]['NRBIN']) + 'x'
-        #                       + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']))
+                if CCDl_list[i]['TEXPMS'] != CCDr_list[0]['TEXPMS']:
+                    test_type = np.append(test_type, 'exp')
+                elif CCDl_list[i]['NCBIN CCDColumns'] != CCDr_list[0]['NCBIN CCDColumns']:
+                    test_type = np.append(test_type, 'col')
+                elif CCDl_list[i]['NRBIN'] != CCDr_list[0]['NRBIN']:
+                    test_type = np.append(test_type, 'row')
+                else:
+                    test_type = np.append(test_type, 'ref')
+            #    subtract dark current from both long and references
+                CCDl_sub_img.append(
+                    img_diff(CCDl_list[i]['IMAGE'].copy(), CCDs_list[i]['IMAGE'].copy()))
+                CCDr_sub_img.append(img_diff(
+                    CCDr_list[i]['IMAGE'].copy(), CCDrs_list[i]['IMAGE'].copy()))  # update
 
-        ####################################################
-        #############        BINNING       #################
-        ####################################################
+            ####################################################
+            #############        BINNING       #################
+            ####################################################
 
-        # copy settings from long image (for binning settings)
-        bin_input = copy.deepcopy(CCDl_list)
+            # copy settings from long image (for binning settings)
+            bin_input = copy.deepcopy(CCDl_list)
 
-        # replace images with the images with subtrated dark (I think this is old and not used)
-        for i in range(0, len(CCDs_list)):
-            bin_input[i]['IMAGE'] = CCDl_sub_img[i].copy()
+            # replace images with the images with subtrated dark (I think this is old and not used)
+            for i in range(0, len(CCDs_list)):
+                bin_input[i]['IMAGE'] = CCDl_sub_img[i].copy()
 
-        # create manually binned images
-        for i in range(0, len(CCDs_list)):
+            # create manually binned images
+            for i in range(0, len(CCDs_list)):
 
-            # update reference image that should be binned manually
-            ref = copy.deepcopy(CCDr_list[i])
-            ref['IMAGE'] = CCDr_sub_img[i].copy()
+                # update reference image that should be binned manually
+                ref = copy.deepcopy(CCDr_list[i])
+                ref['IMAGE'] = CCDr_sub_img[i].copy()
 
-            # bin reference image according to bin_input settings
-            binned.append(bin_ref(copy.deepcopy(ref), bin_input[i].copy()))
+                # bin reference image according to bin_input settings
+                binned.append(bin_ref(copy.deepcopy(ref), bin_input[i].copy()))
 
-        # # plot histograms of manual and instrument bins
-        # fig3, axs3 = plt.subplots(3, len(CCDs_list), figsize=(
-        #     15, 6), facecolor='w', edgecolor='k')
-        # fig3.subplots_adjust(hspace=1, wspace=.001)
-        # axs3 = axs3.ravel()
+            # # plot histograms of manual and instrument bins
+            # fig3, axs3 = plt.subplots(3, len(CCDs_list), figsize=(
+            #     15, 6), facecolor='w', edgecolor='k')
+            # fig3.subplots_adjust(hspace=1, wspace=.001)
+            # axs3 = axs3.ravel()
 
-        # # start and stop for plotting
-        # rstart, rstop = 1, -1
-        # cstart, cstop = 1, -1
+            # # start and stop for plotting
+            # rstart, rstop = 1, -1
+            # cstart, cstop = 1, -1
 
-        # # bin (histogram) size
-        # binn = 80
+            # # bin (histogram) size
+            # binn = 80
 
-        # for i in range(0, len(CCDs_list)):
+            # for i in range(0, len(CCDs_list)):
 
-        #     print(i)
+            #     print(i)
 
-        #     inst_bin = CCDl_sub_img[i].copy()
+            #     inst_bin = CCDl_sub_img[i].copy()
 
-        #     mean_man = binned[i].mean()
-        #     std_man = binned[i].std()
+            #     mean_man = binned[i].mean()
+            #     std_man = binned[i].std()
 
-        #     mean_inst = inst_bin.mean()
-        #     std_inst = inst_bin.std()
+            #     mean_inst = inst_bin.mean()
+            #     std_inst = inst_bin.std()
 
-        #     axs3[i].hist(binned[i][rstart:rstop, cstart:cstop].ravel(), range=(mean_man-3*std_man, mean_man+3*std_man), bins=binn, alpha=0.6,
-        #                  color="skyblue", label='manual', density=True)
-        #     axs3[i+len(CCDs_list)].hist(inst_bin[rstart:rstop, cstart:cstop].ravel(), range=(mean_inst-3*std_man, mean_inst+3*std_inst), bins=binn, alpha=0.4,
-        #                                 color='red', label='instrument', density=True)
-        #     axs3[i+2*len(CCDs_list)].hist(inst_bin[rstart:rstop, cstart:cstop].ravel(), bins=binn, range=(mean_man-3*std_man, mean_man+3*std_man), alpha=0.4,
-        #                                   color='red', label='instrument', density=True)
-        #     axs3[i+2*len(CCDs_list)].hist(binned[i][rstart:rstop, cstart:cstop].ravel(), bins=binn, range=(mean_man-3*std_man, mean_man+3*std_man), alpha=0.6,
-        #                                   color='skyblue', label='manual', density=True)
-        #     axs3[i].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-        #                       + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA'])+' man')
-        #     axs3[i+len(CCDs_list)].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-        #                                      + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']) + ' inst')
-        #     axs3[i+2*len(CCDs_list)].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-        #                                        + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']) + ' comp')
+            #     axs3[i].hist(binned[i][rstart:rstop, cstart:cstop].ravel(), range=(mean_man-3*std_man, mean_man+3*std_man), bins=binn, alpha=0.6,
+            #                  color="skyblue", label='manual', density=True)
+            #     axs3[i+len(CCDs_list)].hist(inst_bin[rstart:rstop, cstart:cstop].ravel(), range=(mean_inst-3*std_man, mean_inst+3*std_inst), bins=binn, alpha=0.4,
+            #                                 color='red', label='instrument', density=True)
+            #     axs3[i+2*len(CCDs_list)].hist(inst_bin[rstart:rstop, cstart:cstop].ravel(), bins=binn, range=(mean_man-3*std_man, mean_man+3*std_man), alpha=0.4,
+            #                                   color='red', label='instrument', density=True)
+            #     axs3[i+2*len(CCDs_list)].hist(binned[i][rstart:rstop, cstart:cstop].ravel(), bins=binn, range=(mean_man-3*std_man, mean_man+3*std_man), alpha=0.6,
+            #                                   color='skyblue', label='manual', density=True)
+            #     axs3[i].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
+            #                       + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA'])+' man')
+            #     axs3[i+len(CCDs_list)].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
+            #                                      + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']) + ' inst')
+            #     axs3[i+2*len(CCDs_list)].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
+            #                                        + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']) + ' comp')
 
-        mean_man_tot = np.array([])
-        mean_inst_tot = np.array([])
+            mean_man_tot = np.array([])
+            mean_inst_tot = np.array([])
+            all_man_tot = np.array([])
+            all_inst_tot = np.array([])
+            all_man_tot_exp = np.array([])
+            all_inst_tot_exp = np.array([])
+            all_man_tot_row = np.array([])
+            all_inst_tot_row = np.array([])
+            all_man_tot_col = np.array([])
+            all_inst_tot_col = np.array([])
 
-        for i in range(0, len(CCDs_list)):
-            inst_bin = CCDl_sub_img[i].copy()
-            mean_man_tot = np.append(mean_man_tot, binned[i].mean())
-            mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
+            for i in range(0, len(CCDs_list)):
+                if test_type[i] == 'exp':
+                    inst_bin = CCDl_sub_img[i].copy()
 
-        plt.plot(mean_man_tot[test_type == 'exp'],
-                 mean_inst_tot[test_type ==
-                               'exp'], '.', mean_man_tot[test_type == 'row'],
-                 mean_inst_tot[test_type ==
-                               'row'], '+', mean_man_tot[test_type == 'col'],
-                 mean_inst_tot[test_type == 'col'], 'x')
+                    mean_man_tot = np.append(mean_man_tot, binned[i].mean())
+                    all_man_tot_exp = np.append(
+                        all_man_tot_exp, binned[i].flatten())
+
+                    mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
+                    all_inst_tot_exp = np.append(
+                        all_inst_tot_exp, inst_bin.flatten())
+
+#                    plt.plot(binned[i].flatten(), inst_bin.flatten()/binned[i].flatten(),
+#                             '.', alpha=0.01, markeredgecolor='none')
+
+                elif test_type[i] == 'row':
+
+                    inst_bin = CCDl_sub_img[i].copy()
+
+                    mean_man_tot = np.append(mean_man_tot, binned[i].mean())
+                    all_man_tot_row = np.append(all_man_tot_row, binned[i])
+
+                    mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
+                    all_inst_tot_row = np.append(all_inst_tot_row, inst_bin)
+
+                elif test_type[i] == 'col':
+
+                    inst_bin = CCDl_sub_img[i].copy()
+
+                    mean_man_tot = np.append(mean_man_tot, binned[i].mean())
+                    all_man_tot_col = np.append(all_man_tot_col, binned[i])
+
+                    mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
+                    all_inst_tot_col = np.append(all_inst_tot_col, inst_bin)
+
+            # plt.plot(mean_man_tot[test_type == 'exp'],
+            #         mean_inst_tot[test_type ==
+            #                       'exp'], '.', mean_man_tot[test_type == 'row'],
+            #         mean_inst_tot[test_type ==
+            #                       'row'], '+', mean_man_tot[test_type == 'col'],
+            #         mean_inst_tot[test_type == 'col'], 'x')
+
+            # plt.plot(all_man_tot_col, all_inst_tot_col/all_man_tot_col,
+            #         '.', alpha=0.01, markeredgecolor='none', label=str(channel))
+
+            plt.plot(all_man_tot_exp, all_inst_tot_exp/all_man_tot_exp,
+                     '.', alpha=0.01, markeredgecolor='none')
+
+    leg = plt.legend()
+    for lh in leg.legendHandles:
+        lh._legmarker.set_alpha(1)
     plt.ylabel('measured values')
     plt.xlabel('simulated values')
+    plt.plot(np.array([0, 32000]), np.array([1, 1]), ':')
+    plt.xlim([0, 16000])
+    plt.ylim([0.5, 1.5])
+    plt.title(dirname[-39:-10] + ' Exptime')
     plt.show()
+    #plt.savefig(dirname[-39:-10] + '.png')
+    #plt.savefig(dirname[-39:-10] + '.png')
 
 
 if __name__ == "__main__":
