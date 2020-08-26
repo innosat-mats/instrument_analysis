@@ -16,6 +16,7 @@ import os
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import kde
 from LindasCalibrationFunctions import plotCCDitem
 from LindasCalibrationFunctions import plot_simple
 from L1_calibration_functions import desmear_true_image
@@ -117,7 +118,7 @@ def img_diff(image1, image2):
 
 def main():  # type of binning
 
-    for channel in range(7, 8):
+    for channel in range(1, 8):
 
         dirname = (
             '/home/olemar/Projects/MATS/MATS-data/binning_test_20200812_racfiles/binning/')
@@ -144,6 +145,7 @@ def main():  # type of binning
             pass
         elif len(CCDitems) == 0:
             print('No data for channel ' + str(channel))
+            pass
         else:
             print('Running channel ' + str(channel))
 
@@ -246,14 +248,23 @@ def main():  # type of binning
             all_inst_tot_col = np.array([])
 
             for i in range(0, len(CCDs_list)):
-                if test_type[i] == 'exp':
-                    inst_bin = CCDl_sub_img[i].copy()
 
-                    mean_man_tot = np.append(mean_man_tot, binned[i].mean())
+                inst_bin = CCDl_sub_img[i].copy()
+
+                all_man_tot = np.append(
+                    all_man_tot, binned[i].flatten())
+
+                all_inst_tot = np.append(
+                    all_inst_tot, inst_bin.flatten())
+
+                mean_man_tot = np.append(mean_man_tot, binned[i].mean())
+                mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
+
+                if test_type[i] == 'exp':
+
                     all_man_tot_exp = np.append(
                         all_man_tot_exp, binned[i].flatten())
 
-                    mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
                     all_inst_tot_exp = np.append(
                         all_inst_tot_exp, inst_bin.flatten())
 
@@ -262,49 +273,52 @@ def main():  # type of binning
 
                 elif test_type[i] == 'row':
 
-                    inst_bin = CCDl_sub_img[i].copy()
-
-                    mean_man_tot = np.append(mean_man_tot, binned[i].mean())
                     all_man_tot_row = np.append(all_man_tot_row, binned[i])
-
-                    mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
                     all_inst_tot_row = np.append(all_inst_tot_row, inst_bin)
 
                 elif test_type[i] == 'col':
 
-                    inst_bin = CCDl_sub_img[i].copy()
-
-                    mean_man_tot = np.append(mean_man_tot, binned[i].mean())
                     all_man_tot_col = np.append(all_man_tot_col, binned[i])
-
-                    mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
                     all_inst_tot_col = np.append(all_inst_tot_col, inst_bin)
 
+            colors = ['b', 'g', 'r', 'c', 'm', 'y', 'b']
             # plt.plot(mean_man_tot[test_type == 'exp'],
-            #         mean_inst_tot[test_type ==
-            #                       'exp'], '.', mean_man_tot[test_type == 'row'],
-            #         mean_inst_tot[test_type ==
-            #                       'row'], '+', mean_man_tot[test_type == 'col'],
-            #         mean_inst_tot[test_type == 'col'], 'x')
+            #          mean_inst_tot[test_type ==
+            #                        'exp'], '.', mean_man_tot[test_type == 'row'],
+            #          mean_inst_tot[test_type ==
+            #                        'row'], '+', mean_man_tot[test_type == 'col'],
+            #          mean_inst_tot[test_type == 'col'], 'x', color=colors[channel-1])
+
+        # plt.xlim([0, 10000])
+        # plt.ylim([0, 10000])
 
             # plt.plot(all_man_tot_col, all_inst_tot_col/all_man_tot_col,
-            #         '.', alpha=0.01, markeredgecolor='none', label=str(channel))
+            #          '.', alpha=0.01, markeredgecolor='none', label=str(channel), color=colors[channel-1])
 
             plt.plot(all_man_tot_exp, all_inst_tot_exp/all_man_tot_exp,
-                     '.', alpha=0.01, markeredgecolor='none')
+                     '.', alpha=0.01, markeredgecolor='none', color=colors[channel-1])
 
-    leg = plt.legend()
-    for lh in leg.legendHandles:
-        lh._legmarker.set_alpha(1)
-    plt.ylabel('measured values')
-    plt.xlabel('simulated values')
-    plt.plot(np.array([0, 32000]), np.array([1, 1]), ':')
-    plt.xlim([0, 16000])
+        #   plt.hist2d(all_man_tot_col, all_inst_tot_col/all_man_tot_col,
+        #   bins=(1000, 1000), cmap=plt.cm.Reds)
+
+        # plt.clim(0, 10000)
+        # plt.colorbar()
+    plt.xlim([0, 10000])
     plt.ylim([0.5, 1.5])
-    plt.title(dirname[-39:-10] + ' Exptime')
+    plt.ylabel('measured values/manually binned values')
+    plt.xlabel('manually binned values')
+    plt.plot([0, 32000], [1, 1], 'k--', linewidth=0.5)
+
+#    leg = plt.legend()
+#    for lh in leg.legendHandles:
+#        lh._legmarker.set_alpha(1)
+    # plt.plot(np.array([0, 32000]), np.array([1, 1]), ':')
+    # plt.xlim([0, 16000])
+    # plt.ylim([0.5, 1.5])
+    plt.title(dirname[-39:-10])
     plt.show()
-    #plt.savefig(dirname[-39:-10] + '.png')
-    #plt.savefig(dirname[-39:-10] + '.png')
+    # plt.savefig(dirname[-39:-10] + '.png')
+    # plt.savefig(dirname[-39:-10] + '.png')
 
 
 if __name__ == "__main__":
