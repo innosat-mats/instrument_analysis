@@ -5,6 +5,7 @@ Created on Mon Jun 15 12:23:19 2020
 @author: bjorn
 """
 
+# %%
 
 # fmt: off
 import sys
@@ -23,6 +24,7 @@ from L1_calibration_functions import desmear_true_image
 import copy
 import read_in_functions
 from read_in_functions import read_CCDitem_from_imgview, readimageviewpics, read_MATS_image
+import seaborn as sns
 
 # fmt: on
 
@@ -30,22 +32,37 @@ from read_in_functions import read_CCDitem_from_imgview, readimageviewpics, read
 # TO DO: COMBINE THE FOLLOWING TWO FUNCITONS INTO ONE THAT BINS ACCORDING TO
 # BOTH FPGA AND ON-CHIP & ROW SETTINGS;
 
+
 def bin_ref(ref, ccd):
 
     # simple code for binning
 
-    nrow, ncol, nrskip, ncskip, nrbin, ncbin, exptime = (ccd['NROW'], ccd['NCOL']+1,
-                                                         ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'], ccd['TEXPMS'])
+    nrow, ncol, nrskip, ncskip, nrbin, ncbin, exptime = (
+        ccd["NROW"],
+        ccd["NCOL"] + 1,
+        ccd["NRSKIP"],
+        ccd["NCSKIP"],
+        ccd["NRBIN"],
+        ccd["NColBinCCD"],
+        ccd["TEXPMS"],
+    )
 
-    nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr, exptimer = (ref['NROW'], ref['NCOL']+1,
-                                                                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'], ref['TEXPMS'])
+    nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr, exptimer = (
+        ref["NROW"],
+        ref["NCOL"] + 1,
+        ref["NRSKIP"],
+        ref["NCSKIP"],
+        ref["NRBIN"],
+        ref["NColBinCCD"],
+        ref["TEXPMS"],
+    )
 
-    exptimefactor = int((exptime-2000)/(exptimer-2000))
+    exptimefactor = int((exptime - 2000) / (exptimer - 2000))
     # reference image that will be binned according to 'ccd' settings
-    imgref = ref['IMAGE']
+    imgref = ref["IMAGE"]
 
     # in case reference image is already a binned image
-    ncbin, nrbin = int(ncbin/ncbinr), int(nrbin/nrbinr)
+    ncbin, nrbin = int(ncbin / ncbinr), int(nrbin / nrbinr)
 
     # images must cover the same ccd section
     if ncskip == ncskipr and nrskip == nrskipr:
@@ -53,37 +70,51 @@ def bin_ref(ref, ccd):
         colbin = np.zeros([nrowr, ncol])
 
         for j in range(0, ncol):
-            colbin[:, j] = imgref[:, j*ncbin:(j+1)*ncbin].sum(axis=1)
+            colbin[:, j] = imgref[:, j * ncbin : (j + 1) * ncbin].sum(axis=1)
 
         # declare zero array for row binning
         binned = np.zeros([nrow, ncol])
 
         for j in range(0, nrow):
-            binned[j, :] = colbin[j*nrbin:(j+1)*nrbin, :].sum(axis=0)
+            binned[j, :] = colbin[j * nrbin : (j + 1) * nrbin, :].sum(axis=0)
 
-        binned = binned*exptimefactor
+        binned = binned * exptimefactor
         return binned
 
     else:
 
-        sys.exit('Error: images not from the same CCD region.')
+        sys.exit("Error: images not from the same CCD region.")
 
 
 def bin_ref_FPGA(ref, ccd):
 
     # simple code for binning
-    nrow, ncol, nrskip, ncskip, nrbin, ncbin, exptime = (ccd['NROW'], ccd['NCOL']+1,
-                                                         ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'], ccd['TEXPMS'])
+    nrow, ncol, nrskip, ncskip, nrbin, ncbin, exptime = (
+        ccd["NROW"],
+        ccd["NCOL"] + 1,
+        ccd["NRSKIP"],
+        ccd["NCSKIP"],
+        ccd["NRBIN"],
+        ccd["NColBinCCD"],
+        ccd["TEXPMS"],
+    )
 
-    nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr, exptimer = (ref['NROW'], ref['NCOL']+1,
-                                                                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'], ref['TEXPMS'])
+    nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr, exptimer = (
+        ref["NROW"],
+        ref["NCOL"] + 1,
+        ref["NRSKIP"],
+        ref["NCSKIP"],
+        ref["NRBIN"],
+        ref["NColBinCCD"],
+        ref["TEXPMS"],
+    )
 
-    exptimefactor = int((exptime-2000)/(exptimer-2000))
+    exptimefactor = int((exptime - 2000) / (exptimer - 2000))
     # reference image that will be binned according to 'ccd' settings
-    imgref = ref['IMAGE']
+    imgref = ref["IMAGE"]
 
     # in case reference image is already a binned image
-    ncbin, nrbin = int(ncbin/ncbinr), int(nrbin/nrbinr)
+    ncbin, nrbin = int(ncbin / ncbinr), int(nrbin / nrbinr)
 
     # images must cover the same ccd section
     if ncskip == ncskipr and nrskip == nrskipr:
@@ -91,236 +122,182 @@ def bin_ref_FPGA(ref, ccd):
         colbin = np.zeros([nrowr, ncol])
 
         for j in range(0, ncol):
-            colbin[:, j] = imgref[:, j*ncbin:(j+1)*ncbin].sum(axis=1)
+            colbin[:, j] = imgref[:, j * ncbin : (j + 1) * ncbin].sum(axis=1)
 
         # declare zero array for row binning
         binned = np.zeros([nrow, ncol])
 
         for j in range(0, nrow):
-            binned[j, :] = colbin[j*nrbin:(j+1)*nrbin, :].sum(axis=0)
+            binned[j, :] = colbin[j * nrbin : (j + 1) * nrbin, :].sum(axis=0)
 
-        binned = binned*exptimefactor
+        binned = binned * exptimefactor
         return binned
 
     else:
 
-        sys.exit('Error: images not from the same CCD region.')
+        sys.exit("Error: images not from the same CCD region.")
 
 
 def img_diff(image1, image2):
 
-    return image1-image2
+    return image1 - image2
 
 
-####################################################
-#############        LOAD DATA      ################
-####################################################
+def get_binning_test_data(
+    dirname, channels=[1, 2, 3, 4, 5, 6, 7], test_type_filter="all"
+):
+    """get data from binning tests. Ignores channels with incomplete tests (not divisible by 4)
 
-def main():  # type of binning
+    Keyword arguments:
+    dirname -- name of directory of data
+    channels -- list of channels to consider (default [1,2,3,4,5,6,7])
+    test_type -- type of tests to include "all" (default), "col", "row" or "exp"
+    """
+    CCDitems = []
+    IDstrings = []
+    binned = []
 
-    for channel in range(1, 8):
+    os.chdir(dirname)
 
-        dirname = (
-            '/home/olemar/Projects/MATS/MATS-data/binning_test_20200812_racfiles/binning/')
-        CCDitems = []
-        IDstrings = []
-        binned = []
+    CCDitems = read_in_functions.read_CCDitems(dirname)
 
-        os.chdir(dirname)
+    CCDitems_use = []
 
-        CCDitems = read_in_functions.read_CCDitems(
-            dirname
+    # filter on channels
+    for i in range(len(CCDitems)):
+        if CCDitems[i]["CCDSEL"] in channels:
+            CCDitems_use.append(CCDitems[i])
+
+    CCDitems = CCDitems_use
+    CCDitems_use = []
+
+    # filter on complete tests
+    for channel in channels:
+        I = []
+        for j in range(len(CCDitems)):
+            if CCDitems[j]["CCDSEL"] == channel:
+                I.append(j)
+
+        if np.mod(len(I), 4) != 0:
+            print("Tests incomplete for channel " + str(channel))
+        elif len(I) == 0:
+            print("No data for channel " + str(channel))
+        else:
+            [CCDitems_use.append(CCDitems[i]) for i in I]
+    CCDitems = CCDitems_use
+
+    # stack data into 4 arrays one for each measurement type
+    CCDl_list = np.copy(CCDitems[0::4])  # long exposure
+    CCDs_list = np.copy(CCDitems[1::4])  # short exposure
+    CCDr_list = np.copy(CCDitems[2::4])  # reference images
+    CCDrs_list = np.copy(CCDitems[3::4])  # reference short (not binned)
+
+    CCDl_sub_img, CCDr_sub_img = [], []
+    test_type = np.array([])  # store test type
+    for i in range(0, len(CCDs_list)):
+
+        # ASSIGN TEST TYPE
+        if CCDl_list[i]["TEXPMS"] != CCDr_list[0]["TEXPMS"]:
+            test_type = np.append(test_type, "exp")
+        elif CCDl_list[i]["NCBIN CCDColumns"] != CCDr_list[0]["NCBIN CCDColumns"]:
+            test_type = np.append(test_type, "col")
+        elif CCDl_list[i]["NRBIN"] != CCDr_list[0]["NRBIN"]:
+            test_type = np.append(test_type, "row")
+        else:
+            test_type = np.append(test_type, "ref")
+
+        # SUBTRACT DARK IMAGES from long exposure and reference
+        CCDl_sub_img.append(
+            img_diff(CCDl_list[i]["IMAGE"].copy(), CCDs_list[i]["IMAGE"].copy())
+        )
+        CCDr_sub_img.append(
+            img_diff(CCDr_list[i]["IMAGE"].copy(), CCDrs_list[i]["IMAGE"].copy())
         )
 
-        CCDitems_use = []
+    # DO BINNING SIMULATIONS
 
-        for i in range(len(CCDitems)):
-            if CCDitems[i]['CCDSEL'] == channel:
-                CCDitems_use.append(CCDitems[i])
+    # copy settings from long image (for binning settings)
+    bin_input = copy.deepcopy(CCDl_list)
 
-        CCDitems = CCDitems_use
+    # replace images with the images with subtrated dark
+    for i in range(0, len(CCDs_list)):
+        bin_input[i]["IMAGE"] = CCDl_sub_img[i].copy()
 
-        if np.mod(len(CCDitems), 4) != 0:
-            print('Tests incomplete for channel ' + str(channel))
-            pass
-        elif len(CCDitems) == 0:
-            print('No data for channel ' + str(channel))
-            pass
+    # create manually binned images
+    for i in range(0, len(CCDs_list)):
+
+        # replace reference image that should be binned manually with one where the dark is removed
+        ref = copy.deepcopy(CCDr_list[i])
+        ref["IMAGE"] = CCDr_sub_img[i].copy()
+
+        # bin reference image according to bin_input settings
+        binned.append(bin_ref(copy.deepcopy(ref), bin_input[i].copy()))
+
+    man_tot = np.array([])
+    inst_tot = np.array([])
+    test_type_tot = np.array([])
+    channel_tot = np.array([])
+
+    for i in range(0, len(CCDs_list)):
+
+        if test_type[i] == test_type_filter or (
+            test_type_filter == "all" and test_type[i] != "ref"
+        ):
+
+            inst_bin = CCDl_sub_img[i].copy()
+            man_tot = np.append(man_tot, binned[i].flatten())
+            inst_tot = np.append(inst_tot, inst_bin.flatten())
+            test_type_tot = np.append(
+                test_type_tot, [test_type[i]] * len(inst_bin.flatten()),
+            )
+            channel_tot = np.append(
+                channel_tot, CCDs_list[i]["CCDSEL"] * np.ones(len(inst_bin.flatten()))
+            )
+
         else:
-            print('Running channel ' + str(channel))
+            pass
+            # print("Skipping image " + str(i) + " of type " + test_type[i])
 
-            CCDl_list = np.copy(CCDitems[0::4])  # long exposure
-            CCDs_list = np.copy(CCDitems[1::4])  # short exposure
-            CCDr_list = np.copy(CCDitems[2::4])  # new reference images
-            # reference short (not binned)
-            CCDrs_list = np.copy(CCDitems[3::4])
-
-            # SUBTRACT DARK IMAGES
-
-            CCDl_sub_img, CCDr_sub_img = [], []
-            test_type = np.array([])
-            for i in range(0, len(CCDs_list)):
-
-                if CCDl_list[i]['TEXPMS'] != CCDr_list[0]['TEXPMS']:
-                    test_type = np.append(test_type, 'exp')
-                elif CCDl_list[i]['NCBIN CCDColumns'] != CCDr_list[0]['NCBIN CCDColumns']:
-                    test_type = np.append(test_type, 'col')
-                elif CCDl_list[i]['NRBIN'] != CCDr_list[0]['NRBIN']:
-                    test_type = np.append(test_type, 'row')
-                else:
-                    test_type = np.append(test_type, 'ref')
-            #    subtract dark current from both long and references
-                CCDl_sub_img.append(
-                    img_diff(CCDl_list[i]['IMAGE'].copy(), CCDs_list[i]['IMAGE'].copy()))
-                CCDr_sub_img.append(img_diff(
-                    CCDr_list[i]['IMAGE'].copy(), CCDrs_list[i]['IMAGE'].copy()))  # update
-
-            ####################################################
-            #############        BINNING       #################
-            ####################################################
-
-            # copy settings from long image (for binning settings)
-            bin_input = copy.deepcopy(CCDl_list)
-
-            # replace images with the images with subtrated dark (I think this is old and not used)
-            for i in range(0, len(CCDs_list)):
-                bin_input[i]['IMAGE'] = CCDl_sub_img[i].copy()
-
-            # create manually binned images
-            for i in range(0, len(CCDs_list)):
-
-                # update reference image that should be binned manually
-                ref = copy.deepcopy(CCDr_list[i])
-                ref['IMAGE'] = CCDr_sub_img[i].copy()
-
-                # bin reference image according to bin_input settings
-                binned.append(bin_ref(copy.deepcopy(ref), bin_input[i].copy()))
-
-            # # plot histograms of manual and instrument bins
-            # fig3, axs3 = plt.subplots(3, len(CCDs_list), figsize=(
-            #     15, 6), facecolor='w', edgecolor='k')
-            # fig3.subplots_adjust(hspace=1, wspace=.001)
-            # axs3 = axs3.ravel()
-
-            # # start and stop for plotting
-            # rstart, rstop = 1, -1
-            # cstart, cstop = 1, -1
-
-            # # bin (histogram) size
-            # binn = 80
-
-            # for i in range(0, len(CCDs_list)):
-
-            #     print(i)
-
-            #     inst_bin = CCDl_sub_img[i].copy()
-
-            #     mean_man = binned[i].mean()
-            #     std_man = binned[i].std()
-
-            #     mean_inst = inst_bin.mean()
-            #     std_inst = inst_bin.std()
-
-            #     axs3[i].hist(binned[i][rstart:rstop, cstart:cstop].ravel(), range=(mean_man-3*std_man, mean_man+3*std_man), bins=binn, alpha=0.6,
-            #                  color="skyblue", label='manual', density=True)
-            #     axs3[i+len(CCDs_list)].hist(inst_bin[rstart:rstop, cstart:cstop].ravel(), range=(mean_inst-3*std_man, mean_inst+3*std_inst), bins=binn, alpha=0.4,
-            #                                 color='red', label='instrument', density=True)
-            #     axs3[i+2*len(CCDs_list)].hist(inst_bin[rstart:rstop, cstart:cstop].ravel(), bins=binn, range=(mean_man-3*std_man, mean_man+3*std_man), alpha=0.4,
-            #                                   color='red', label='instrument', density=True)
-            #     axs3[i+2*len(CCDs_list)].hist(binned[i][rstart:rstop, cstart:cstop].ravel(), bins=binn, range=(mean_man-3*std_man, mean_man+3*std_man), alpha=0.6,
-            #                                   color='skyblue', label='manual', density=True)
-            #     axs3[i].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-            #                       + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA'])+' man')
-            #     axs3[i+len(CCDs_list)].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-            #                                      + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']) + ' inst')
-            #     axs3[i+2*len(CCDs_list)].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-            #                                        + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']) + ' comp')
-
-            mean_man_tot = np.array([])
-            mean_inst_tot = np.array([])
-            all_man_tot = np.array([])
-            all_inst_tot = np.array([])
-            all_man_tot_exp = np.array([])
-            all_inst_tot_exp = np.array([])
-            all_man_tot_row = np.array([])
-            all_inst_tot_row = np.array([])
-            all_man_tot_col = np.array([])
-            all_inst_tot_col = np.array([])
-
-            for i in range(0, len(CCDs_list)):
-
-                inst_bin = CCDl_sub_img[i].copy()
-
-                all_man_tot = np.append(
-                    all_man_tot, binned[i].flatten())
-
-                all_inst_tot = np.append(
-                    all_inst_tot, inst_bin.flatten())
-
-                mean_man_tot = np.append(mean_man_tot, binned[i].mean())
-                mean_inst_tot = np.append(mean_inst_tot, inst_bin.mean())
-
-                if test_type[i] == 'exp':
-
-                    all_man_tot_exp = np.append(
-                        all_man_tot_exp, binned[i].flatten())
-
-                    all_inst_tot_exp = np.append(
-                        all_inst_tot_exp, inst_bin.flatten())
-
-#                    plt.plot(binned[i].flatten(), inst_bin.flatten()/binned[i].flatten(),
-#                             '.', alpha=0.01, markeredgecolor='none')
-
-                elif test_type[i] == 'row':
-
-                    all_man_tot_row = np.append(all_man_tot_row, binned[i])
-                    all_inst_tot_row = np.append(all_inst_tot_row, inst_bin)
-
-                elif test_type[i] == 'col':
-
-                    all_man_tot_col = np.append(all_man_tot_col, binned[i])
-                    all_inst_tot_col = np.append(all_inst_tot_col, inst_bin)
-
-            colors = ['b', 'g', 'r', 'c', 'm', 'y', 'b']
-            # plt.plot(mean_man_tot[test_type == 'exp'],
-            #          mean_inst_tot[test_type ==
-            #                        'exp'], '.', mean_man_tot[test_type == 'row'],
-            #          mean_inst_tot[test_type ==
-            #                        'row'], '+', mean_man_tot[test_type == 'col'],
-            #          mean_inst_tot[test_type == 'col'], 'x', color=colors[channel-1])
-
-        # plt.xlim([0, 10000])
-        # plt.ylim([0, 10000])
-
-            # plt.plot(all_man_tot_col, all_inst_tot_col/all_man_tot_col,
-            #          '.', alpha=0.01, markeredgecolor='none', label=str(channel), color=colors[channel-1])
-
-            plt.plot(all_man_tot_exp, all_inst_tot_exp/all_man_tot_exp,
-                     '.', alpha=0.01, markeredgecolor='none', color=colors[channel-1])
-
-        #   plt.hist2d(all_man_tot_col, all_inst_tot_col/all_man_tot_col,
-        #   bins=(1000, 1000), cmap=plt.cm.Reds)
-
-        # plt.clim(0, 10000)
-        # plt.colorbar()
-    plt.xlim([0, 10000])
-    plt.ylim([0.5, 1.5])
-    plt.ylabel('measured values/manually binned values')
-    plt.xlabel('manually binned values')
-    plt.plot([0, 32000], [1, 1], 'k--', linewidth=0.5)
-
-#    leg = plt.legend()
-#    for lh in leg.legendHandles:
-#        lh._legmarker.set_alpha(1)
-    # plt.plot(np.array([0, 32000]), np.array([1, 1]), ':')
-    # plt.xlim([0, 16000])
-    # plt.ylim([0.5, 1.5])
-    plt.title(dirname[-39:-10])
-    plt.show()
-    # plt.savefig(dirname[-39:-10] + '.png')
-    # plt.savefig(dirname[-39:-10] + '.png')
+    return man_tot, inst_tot, channel_tot, test_type_tot
 
 
-if __name__ == "__main__":
-    # execute only if run as a script
-    main()
+# %%
+dirname = "/home/olemar/Projects/MATS/MATS-data/binning_test_20200812_racfiles/binning/"
+
+man_tot_exp, inst_tot_exp, channel_tot, test_type_tot = get_binning_test_data(
+    dirname, test_type_filter="exp", channels=[1]
+)
+
+man_tot_col, inst_tot_col, channel_tot, test_type_tot = get_binning_test_data(
+    dirname, test_type_filter="row", channels=[1]
+)
+
+man_tot_row, inst_tot_row, channel_tot, test_type_tot = get_binning_test_data(
+    dirname, test_type_filter="col", channels=[1]
+)
+
+plt.plot(
+    man_tot_row.flatten(),
+    inst_tot_row / man_tot_row.flatten(),
+    ".",
+    alpha=0.01,
+    markeredgecolor="none",
+)
+
+plt.plot(
+    man_tot_exp.flatten(),
+    inst_tot_exp / man_tot_exp.flatten(),
+    ".",
+    alpha=0.01,
+    markeredgecolor="none",
+)
+plt.plot(
+    man_tot_col.flatten(),
+    inst_tot_col / man_tot_col.flatten(),
+    ".",
+    alpha=0.01,
+    markeredgecolor="none",
+)
+plt.show()
+
+print(test_type_tot)
