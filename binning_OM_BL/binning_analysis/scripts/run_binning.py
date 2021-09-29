@@ -12,11 +12,11 @@ import binning_functions as bf
 import pandas as pd
 from matplotlib import pyplot as plt
 from mats_l1_processing import read_in_functions
+import numpy as np
+from scipy.stats import binned_statistic
+from matplotlib.pyplot import cm
 
 # fmt: on
-
-
-# %%
 
 
 def filter_on_time(CCDitems, starttime=None, stoptime=None):
@@ -41,60 +41,88 @@ def filter_on_time(CCDitems, starttime=None, stoptime=None):
     return CCDitems
 
 
-dirname = "/home/olemar/Projects/MATS/MATS-data/BinningFlatfieldsIR3_100920/BinningIR3/"
+def fit_curve(man_tot, inst_tot, deg, threshold=np.inf):
+
+    all_simulated = man_tot.flatten()
+    all_measured = inst_tot.flatten()
+
+    # fit linear part
+    low_simulated = all_simulated[all_simulated < threshold]
+    low_measured = all_measured[all_simulated < threshold]
+
+    low_measured_mean, bin_edges = binned_statistic(
+        low_simulated, low_measured, "median", bins=2000
+    )[0:2]
+
+    bin_center = (bin_edges[1:] + bin_edges[0:-1]) / 2
+    p_low = np.polyfit(
+        bin_center[~np.isnan(low_measured_mean)],
+        low_measured_mean[~np.isnan(low_measured_mean)],
+        deg,
+        full=True,
+    )[0]
+
+    return p_low, bin_center, low_measured_mean
+
+
+def get_linearity(CCDitems, testtype, plot=True):
+    testtype = "col"
+    channels = [1, 2, 3, 4, 5, 6]
+    plotting_factor = 10
+    threshold = 4e3
+    deg = 1
+
+    color = cm.rainbow(np.linspace(0, 1, 7))
+
+    for i in range(len(channels)):
+        (
+            man_tot,
+            inst_tot,
+            channel,
+            test_type,
+        ) = bf.get_binning_test_data_from_CCD_item(
+            CCDitems, test_type_filter=testtype, channels=[channels[i]]
+        )
+
+        p_low, bin_center, low_measured_mean = fit_curve(
+            man_tot, inst_tot, deg, threshold
+        )
+
+        if plot:
+            plt.plot(
+                man_tot.flatten()[::plotting_factor],
+                inst_tot[::plotting_factor],
+                ".",
+                alpha=0.1,
+                markeredgecolor="none",
+                c=color[i],
+            )
+            plt.plot(
+                np.arange(0, 40000),
+                np.polyval(p_low, np.arange(0, 40000)),
+                "-",
+                c=color[i],
+            )
+
+        print(p_low)
+    if plot:
+        plt.show()
+
+    return p_low
+
+
+# %%
+
+dirname = "/home/olemar/Projects/MATS/MATS-data/binning_test_20200812_racfiles/binning/"
 
 CCDitems = read_in_functions.read_CCDitems(dirname)
 print(len(CCDitems))
 
-starttime = pd.to_datetime("2021-09-10T12:42Z", format="%Y-%m-%dT%H:%MZ")
-endtime = pd.to_datetime("2021-09-10T13:42Z", format="%Y-%m-%dT%H:%MZ")
+starttime = pd.to_datetime("2020-08-10T12:42Z", format="%Y-%m-%dT%H:%MZ")
+endtime = pd.to_datetime("2020-08-16T13:42Z", format="%Y-%m-%dT%H:%MZ")
 
-CCDitems = filter_on_time(CCDitems, starttime, endtime)
-# %%
+# CCDitems = filter_on_time(CCDitems, starttime, endtime)
 
-print(len(CCDitems))
-
-(
-    man_tot_exp,
-    inst_tot_exp,
-    channel_tot,
-    test_type_tot,
-) = bf.get_binning_test_data_from_CCD_item(CCDitems, test_type_filter="col")
-
-# man_tot_col, inst_tot_col, channel_tot, test_type_tot = bf.get_binning_test_data(
-#     dirname, test_type_filter="row", channels=[3]
-# )
-
-# man_tot_row, inst_tot_row, channel_tot, test_type_tot = bf.get_binning_test_data(
-#     dirname, test_type_filter="col", channels=[3]
-# )
-
-# plt.plot(
-#     man_tot_row.flatten(),
-#     inst_tot_row / man_tot_row.flatten(),
-#     ".",
-#     alpha=0.01,
-#     markeredgecolor="none",
-# )
-
-plt.plot(
-    man_tot_exp.flatten(),
-    inst_tot_exp,
-    ".",
-    alpha=0.01,
-    markeredgecolor="none",
-)
-# plt.plot(
-#     man_tot_col.flatten(),
-#     inst_tot_col / man_tot_col.flatten(),
-#     ".",
-#     alpha=0.01,
-#     markeredgecolor="none",
-# )
-
-plt.show()
-
-print(test_type_tot)
-
+get_linearity(CCDitems, "col", plot=True)
 
 # %%
