@@ -1,3 +1,6 @@
 *.pyc
 .DS_store
 .vscode
+CodeCalibrationReportLM/images
+CodeCalibrationReportLM/outputdata
+CodeCalibrationReportLM/.*
