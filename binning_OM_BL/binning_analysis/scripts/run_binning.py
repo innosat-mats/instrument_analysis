@@ -15,6 +15,8 @@ from mats_l1_processing import read_in_functions
 import numpy as np
 from scipy.stats import binned_statistic
 from matplotlib.pyplot import cm
+from scipy.optimize import curve_fit
+from scipy.interpolate import UnivariateSpline
 
 # fmt: on
 
@@ -41,7 +43,59 @@ def filter_on_time(CCDitems, starttime=None, stoptime=None):
     return CCDitems
 
 
-def fit_curve(man_tot, inst_tot, deg, threshold=np.inf):
+def fit_with_polyfit(x, y, deg):
+
+    p = np.polyfit(
+        x,
+        y,
+        deg,
+        full=True,
+    )[0]
+
+    return p
+
+
+# two functions to fit through origin
+
+
+def linear_fit(x, a):
+    # Curve fitting function
+    return a * x  # b=0 is implied
+
+
+def quadratic_fit(x, a, b):
+    # Curve fitting function
+    return a * x ** 2 + b * x  # c=0 is implied
+
+
+def fit_with_curvefit(x, y, deg):
+
+    if deg == 1:
+        params = curve_fit(linear_fit, x, y)
+        [a] = params[0]
+        p = [a, 0]
+    elif deg == 2:
+        params = curve_fit(quadratic_fit, x, y)
+        [a, b] = params[0]
+        p = [a, b, 0]
+    else:
+        ValueError("only deg 1 and 2 are accepted")
+
+    return p
+
+
+def fit_with_spline(x, y, deg):
+    spl = UnivariateSpline(x, y, k=1, s=0.01)
+    return spl
+
+
+def fit_curve(man_tot, inst_tot, threshold=np.inf, fittype="polyfit"):
+    """Bins the data into evenly spaced bins and performs a fit. Valid fittypes are:
+    'polyfit'
+    'curvefit1'
+    'curvefit2'
+    'spline1'
+    """
 
     all_simulated = man_tot.flatten()
     all_measured = inst_tot.flatten()
@@ -51,26 +105,46 @@ def fit_curve(man_tot, inst_tot, deg, threshold=np.inf):
     low_measured = all_measured[all_simulated < threshold]
 
     low_measured_mean, bin_edges = binned_statistic(
-        low_simulated, low_measured, "median", bins=2000
+        low_simulated, low_measured, "mean", bins=2000
     )[0:2]
 
     bin_center = (bin_edges[1:] + bin_edges[0:-1]) / 2
-    p_low = np.polyfit(
-        bin_center[~np.isnan(low_measured_mean)],
-        low_measured_mean[~np.isnan(low_measured_mean)],
-        deg,
-        full=True,
-    )[0]
+
+    if fittype == "polyfit":
+        p_low = fit_with_polyfit(
+            bin_center[~np.isnan(low_measured_mean)],
+            low_measured_mean[~np.isnan(low_measured_mean)],
+            1,
+        )
+    elif fittype == "curvefit1":
+        p_low = fit_with_curvefit(
+            bin_center[~np.isnan(low_measured_mean)],
+            low_measured_mean[~np.isnan(low_measured_mean)],
+            1,
+        )
+    elif fittype == "curvefit2":
+        p_low = fit_with_curvefit(
+            bin_center[~np.isnan(low_measured_mean)],
+            low_measured_mean[~np.isnan(low_measured_mean)],
+            2,
+        )
+    elif fittype == "spline1":
+        p_low = fit_with_spline(
+            bin_center[~np.isnan(low_measured_mean)],
+            low_measured_mean[~np.isnan(low_measured_mean)],
+            1,
+        )
+    else:
+        ValueError("Invalid fittype")
 
     return p_low, bin_center, low_measured_mean
 
 
-def get_linearity(CCDitems, testtype, plot=True):
+def get_linearity(CCDitems, testtype, plot=True, fittype="polyfit"):
     testtype = "col"
-    channels = [1, 2, 3, 4, 5, 6]
-    plotting_factor = 10
-    threshold = 4e3
-    deg = 1
+    channels = [6]
+    plotting_factor = 1
+    threshold = 30e3
 
     color = cm.rainbow(np.linspace(0, 1, 7))
 
@@ -85,7 +159,7 @@ def get_linearity(CCDitems, testtype, plot=True):
         )
 
         p_low, bin_center, low_measured_mean = fit_curve(
-            man_tot, inst_tot, deg, threshold
+            man_tot, inst_tot, threshold, fittype
         )
 
         if plot:
@@ -95,17 +169,32 @@ def get_linearity(CCDitems, testtype, plot=True):
                 ".",
                 alpha=0.1,
                 markeredgecolor="none",
-                c=color[i],
+                c=color[channels[i]],
             )
             plt.plot(
-                np.arange(0, 40000),
-                np.polyval(p_low, np.arange(0, 40000)),
-                "-",
-                c=color[i],
+                bin_center,
+                low_measured_mean,
+                "+",
+                c=color[channels[i]],
             )
+            if fittype == "spline1":
+                plt.plot(
+                    np.arange(0, 40000),
+                    p_low(np.arange(0, 40000)),
+                    "-",
+                    c=color[channels[i]],
+                )
+            else:
+                plt.plot(
+                    np.arange(0, 40000),
+                    np.polyval(p_low, np.arange(0, 40000)),
+                    "-",
+                    c=color[channels[i]],
+                )
 
         print(p_low)
     if plot:
+        plt.savefig("linearity_fit_channel_" + str(channels[i]) + ".png")
         plt.show()
 
     return p_low
@@ -123,6 +212,6 @@ endtime = pd.to_datetime("2020-08-16T13:42Z", format="%Y-%m-%dT%H:%MZ")
 
 # CCDitems = filter_on_time(CCDitems, starttime, endtime)
 
-get_linearity(CCDitems, "col", plot=True)
+get_linearity(CCDitems, "col", plot=True, fittype="spline1")
 
 # %%
