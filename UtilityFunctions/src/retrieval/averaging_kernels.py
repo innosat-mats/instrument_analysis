@@ -274,5 +274,50 @@ class Kernel:
             raise NotImplementedError
 
 
+def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True):
+    """
+    Applies averaging kernels to a 3D field
+
+    Parameters
+    ----------
+    field: array-like
+        three dimensional field to apply the AVK to
+    x: array
+        coordinates in first dim
+    y: array
+        coordinates in second dim
+    z: array
+        coordinates in second dim
+    fwhm: array
+        full width half mean of kernels [fwhm_x, fwhm_y, fwhm_z)
+    only_kernel: bool
+        return only kernel matrix (for debugging)
+
+    Returns
+    ----------
+
+    averaged_field: array
+        3d field with applied kernels (or AVK on grid if only_kernel == True)
+
+    """
+
+    grid_3 = Grid(x, y, z)
+    avg_field = np.zeros((len(x), len(y), len(z)))
+
+    AVK = Kernel(np.array([fwhm[0], fwhm[1], fwhm[2]]))
+
+    if only_kernel:
+        #avg_field = AVK.get_kernel(grid=grid_3, x0=np.array([0, 0, 0]))
+        AVK.plot_kernel()
+
+    else:
+        for i in np.arange(len(x)):
+            for j in np.arange(len(y)):
+                for k in np.arange(len(z)):
+                    avg_field[i, j, k] = AVK.apply_kernel(field, grid_3,
+                                                          np.array([i, j, k]))
+
+    return avg_field
+
 
 # %%
