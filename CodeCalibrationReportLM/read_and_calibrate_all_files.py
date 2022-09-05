@@ -8,33 +8,33 @@ Created on Thu Apr 23 13:33:31 2020
 
 
 
-from LindasCalibrationFunctions import  plotCCDitem
+from mats_l1_processing.LindasCalibrationFunctions import  plotCCDitem
 
 
 
-from read_in_functions import read_all_files_in_directory
+from mats_l1_processing.read_in_functions import read_all_files_in_root_directory
 import matplotlib.pyplot as plt
-from L1_calibrate import L1_calibrate
-from LindasCalibrationFunctions import plot_CCDimage
+from mats_l1_processing.L1_calibrate import L1_calibrate
+from mats_l1_processing.LindasCalibrationFunctions import plot_CCDimage
+directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/BinningFlatfieldsIR3_210910/'
+#directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/IR3_linearity_binning_211018/'
+#directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/BinningFlatfieldsIR3_210910/'
+# directory='/Users/lindamegner/MATS/retrieval/Calibration/CoolingTests/Rac22C/'
 
-
-
-directory='/Users/lindamegner/MATS/retrieval/Calibration/CoolingTests/Rac22C/'
-
-directory='/Users/lindamegner/MATS/retrieval/Calibration/FM_calibration_at_AIT/20190520/'
-directory='/Users/lindamegner/MATS/retrieval/Calibration/Final_AIT_2021/20210616_Baffletests_and_LimbHouseLightLeakage/'
+# directory='/Users/lindamegner/MATS/retrieval/Calibration/FM_calibration_at_AIT/20190520/'
+# directory='/Users/lindamegner/MATS/retrieval/Calibration/Final_AIT_2021/20210616_Baffletests_and_LimbHouseLightLeakage/'
 #directory='/Users/lindamegner/MATS/retrieval/Calibration/Final_AIT_2021/LimbFlatfield/'
 read_from='rac'  
-CCDitems=read_all_files_in_directory(read_from,directory)
+CCDitems=read_all_files_in_root_directory(read_from,directory)
 
+calibration_file='/Users/lindamegner/MATS/retrieval/git/MATS-L1-processing/scripts/calibration_data_linda.toml'
 
-
-calibrate=True
+calibrate=False
 plot=True
 
 if calibrate:
     for CCDitem in CCDitems[:3]:
-        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp =L1_calibrate(CCDitem)
+        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp =L1_calibrate(CCDitem, calibration_file)
 
         if plot==True:
             fig,ax=plt.subplots(5,1)
@@ -47,8 +47,9 @@ if calibrate:
 
 else:    
 
-    for CCDitem in CCDitems[:]:
-        fig=plt.figure()
-        ax=fig.gca()
-        plotCCDitem(CCDitem,fig, ax, title=CCDitem['channel'])
+    for CCDitem in CCDitems:
+        if CCDitem['id'].startswith('13153'):
+            fig=plt.figure()
+            ax=fig.gca()
+            plotCCDitem(CCDitem,fig, ax, title=CCDitem['channel']+ ' '+CCDitem['id'])
  

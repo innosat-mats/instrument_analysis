@@ -9,11 +9,11 @@ Created on Tue Oct 20 09:33:32 2020
 
     
 
-from mats_l1_processing.L1_calibration_functions import compensate_bad_columns
+from mats_l1_processing.L1_calibration_functions import compensate_bad_columns #,  get_true_image
 from mats_l1_processing.read_in_functions import read_all_files_in_directory
 import matplotlib.pyplot as plt
 import numpy as np
-
+from mats_l1_processing.LindasCalibrationFunctions import  plot_CCDimage   
 
 
 def columnbin(image,binsize):
@@ -109,6 +109,7 @@ for idir, directory in enumerate(directories):
         #fig1.get_axes()[5].set_aspect('auto')
     
     clim=[800,1300]
+    itestexample=5
 
     for i, CCDitem in enumerate(CCDitems[2:]):  
 
@@ -127,6 +128,9 @@ for idir, directory in enumerate(directories):
             fig[i]=diffplot2(image_binned_no_bc, comp_image,'binned no bc '+sync,'post-compensated '+sync, fig[i], ax[i],axind=1, clim=clim)
             image_binned_no_bc_sync2.append(image_binned_no_bc)
             comp_image_L1_sync2.append(comp_image)
+            
+            if i==itestexample: 
+                image_uncompensated=CCDitem['IMAGE']
         else:
             sync='SYNC: 0'         
             # Plot the OBC-compensated
@@ -136,6 +140,8 @@ for idir, directory in enumerate(directories):
             fig[i]=diffplot2(image_binned_no_bc_sync2[i]-image_binned_no_bc,comp_image_L1_sync2[i]-CCDitem['IMAGE'] ,'col 2 - col 3 ','col 2 - col 3', fig[i], ax[i],axind=3, clim=[-100,100])
             
             
+            if i==itestexample: 
+                image_OBCcompensated=CCDitem['IMAGE']
             # txtstring1='mean = '+str(np.mean(image_binned_no_bc_sync2[i]-image_binned_no_bc))
             # txtstring2='std = '+str(round(np.std(image_binned_no_bc_sync2[i]-image_binned_no_bc),2))
             # ax[i][0,3].text(0.5, 10,txtstring1)
@@ -145,6 +151,17 @@ for idir, directory in enumerate(directories):
         
         fig[i].savefig('BadColumn_Compensated_OBC_vs_after'+str(i)+'.jpg')
         
-        fig1.savefig('Binned_on_chip_versus_using_after_processing.jpg')
 
-       
+            
+
+        
+    fig1.savefig('Binned_on_chip_versus_using_after_processing.jpg')
+    
+
+# Make example plot for paper:
+paperfig, paperax =plt.subplots(2,1)
+plot_CCDimage(image_uncompensated,paperfig, paperax[0], title='', clim=[900, 1300])
+plot_CCDimage(image_OBCcompensated,paperfig, paperax[1], title='', clim=[900, 1300])
+paperfig.savefig('Uncompensated_vs_compensated.jpg')
+
+#image_bias_sub = get_true_image(CCDitem)

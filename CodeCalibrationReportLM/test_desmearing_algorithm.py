@@ -97,7 +97,7 @@ def meanandstd(image):
 
 SigM=1   
 
-channel='UV2'
+channel='IR1'
 axes=[None]*2
 figs=[None]*2
 figind=0

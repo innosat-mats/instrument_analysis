@@ -16,6 +16,10 @@ from mats_l1_processing.read_in_functions import readprotocol
 from mats_l1_processing.L1_calibration_functions import get_true_image, desmear_true_image, subtract_dark, compensate_flatfield, CCD
 from mats_l1_processing.L1_calibration_functions import calculate_flatfield, calculate_dark, desmear_true_image_reverse, get_true_image_reverse, bin_image_using_predict_and_get_true_image, bin_image_with_BC 
 
+
+import warnings
+
+
 #from LindasCalibrationFunctions import plot_CCDimage 
 
 
@@ -167,6 +171,7 @@ clims=[-2,2]
 #protocol='ForwardModelTestProto.txt'
 
 
+warnings.warn("Warning from Linda: Now you use the old forward model file. Use the one in mats_l1_processing package instead if possible!")
 directory='/Users/lindamegner/MATS/retrieval/Calibration/AfterLightLeakage/Binning/Binning-simulation/'
 protocol='PROTOCOL-BINNING.txt'
 
