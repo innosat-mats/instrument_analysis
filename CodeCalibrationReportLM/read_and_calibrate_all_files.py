@@ -16,7 +16,11 @@ from mats_l1_processing.read_in_functions import read_all_files_in_root_director
 import matplotlib.pyplot as plt
 from mats_l1_processing.L1_calibrate import L1_calibrate
 from mats_l1_processing.LindasCalibrationFunctions import plot_CCDimage
-directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/BinningFlatfieldsIR3_210910/'
+#directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/BinningFlatfieldsIR3_210910/'
+#directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/RacFiles_210906-210910/'
+directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/LaserAlignmentTest_RacFiles0909Duplicated/'
+
+
 #directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/IR3_linearity_binning_211018/'
 #directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/BinningFlatfieldsIR3_210910/'
 # directory='/Users/lindamegner/MATS/retrieval/Calibration/CoolingTests/Rac22C/'

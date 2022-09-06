@@ -306,4 +306,3 @@ for index, picdict in enumerate(picdictlistselect):
 #fig3.savefig('Limb_image_resolution_alltime'+channel+'.jpg')
 
 #pointdictlistIR2=pointdictlist[pointdict.channel=='IR2']
-    
