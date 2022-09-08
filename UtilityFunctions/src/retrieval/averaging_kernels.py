@@ -276,7 +276,7 @@ class Kernel:
 
 
 def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
-                    parallel=True, n_jobs=16):
+                    pp=True, n_jobs=16):
     """
     Applies averaging kernels to a 3D field
 
@@ -294,7 +294,7 @@ def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
         full width half mean of kernels [fwhm_x, fwhm_y, fwhm_z)
     only_kernel : bool
         return only kernel matrix (for debugging)
-    parallel : bool
+    pp : bool
         if parallel processing should be used
     n_jobs : int
         number of parallel processes
@@ -322,7 +322,7 @@ def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
         AVK.plot_kernel()
 
     else:
-        if parallel:
+        if pp:
             # parallel processing (watch max_nbytes / n_jobs)
             avg_field = (Parallel(n_jobs=n_jobs, max_nbytes=None)
                                  (delayed(parallel_loop)(avg_field,
@@ -330,7 +330,7 @@ def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
                                   for i in range(0, len(x))))
 
         else:
-            # no parallel processing (lengthy!)
+            # no parallel processing (lengthy! used for profiling)
             for i in np.arange(len(x)):
                 for j in np.arange(len(y)):
                     for k in np.arange(len(z)):
