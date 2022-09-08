@@ -315,7 +315,6 @@ def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
         return avg_field
 
     grid_3 = Grid(x, y, z)
-    avg_field = np.zeros((len(y), len(z)))
     AVK = Kernel(np.array([fwhm[0], fwhm[1], fwhm[2]]))
 
     if only_kernel:
@@ -324,6 +323,7 @@ def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
     else:
         if pp:
             # parallel processing (watch max_nbytes / n_jobs)
+            avg_field = np.zeros((len(y), len(z)))
             avg_field = (Parallel(n_jobs=n_jobs, max_nbytes=None)
                                  (delayed(parallel_loop)(avg_field,
                                   field, grid_3, i, len(y), len(z))
@@ -331,6 +331,7 @@ def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
 
         else:
             # no parallel processing (lengthy! used for profiling)
+            avg_field = np.zeros((len(x),len(y), len(z)))
             for i in np.arange(len(x)):
                 for j in np.arange(len(y)):
                     for k in np.arange(len(z)):
