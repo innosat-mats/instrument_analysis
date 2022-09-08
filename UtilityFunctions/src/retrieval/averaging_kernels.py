@@ -2,6 +2,7 @@
 import numpy as np
 import plotly.graph_objects as go
 from matplotlib import pyplot as plt
+from joblib import Parallel, delayed
 
 #%%
 class Grid:
@@ -274,24 +275,29 @@ class Kernel:
             raise NotImplementedError
 
 
-def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True):
+def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
+                    parallel=True, n_jobs=16):
     """
     Applies averaging kernels to a 3D field
 
     Parameters
     ----------
-    field: array-like
+    field : array-like
         three dimensional field to apply the AVK to
-    x: array
+    x : array
         coordinates in first dim
-    y: array
+    y : array
         coordinates in second dim
-    z: array
+    z : array
         coordinates in second dim
-    fwhm: array
+    fwhm : array
         full width half mean of kernels [fwhm_x, fwhm_y, fwhm_z)
-    only_kernel: bool
+    only_kernel : bool
         return only kernel matrix (for debugging)
+    parallel : bool
+        if parallel processing should be used
+    n_jobs : int
+        number of parallel processes
 
     Returns
     ----------
@@ -301,21 +307,34 @@ def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True):
 
     """
 
-    grid_3 = Grid(x, y, z)
-    avg_field = np.zeros((len(x), len(y), len(z)))
+    def parallel_loop(avg_field, field, grid_3, i, ny, nz):
+        for j in np.arange(ny):
+            for k in np.arange(nz):
+                avg_field[j, k] = AVK.apply_kernel(field, grid_3,
+                                                   np.array([i, j, k]))
+        return avg_field
 
+    grid_3 = Grid(x, y, z)
+    avg_field = np.zeros((len(y), len(z)))
     AVK = Kernel(np.array([fwhm[0], fwhm[1], fwhm[2]]))
 
     if only_kernel:
-        #avg_field = AVK.get_kernel(grid=grid_3, x0=np.array([0, 0, 0]))
         AVK.plot_kernel()
 
     else:
-        for i in np.arange(len(x)):
-            for j in np.arange(len(y)):
-                for k in np.arange(len(z)):
-                    avg_field[i, j, k] = AVK.apply_kernel(field, grid_3,
-                                                          np.array([i, j, k]))
+        if parallel:
+            # parallel processing (watch max_nbytes / n_jobs)
+            avg_field = (Parallel(n_jobs=n_jobs, max_nbytes=None)
+                                 (delayed(parallel_loop)(avg_field,
+                                  field, grid_3, i, len(y), len(z))
+                                  for i in range(0, len(x))))
+
+        else:
+            # no parallel processing (lengthy!)
+            for i in np.arange(len(x)):
+                for j in np.arange(len(y)):
+                    for k in np.arange(len(z)):
+                        avg_field[i, j, k] = AVK.apply_kernel(field, grid_3, np.array([i, j, k]))
 
     return avg_field
 
