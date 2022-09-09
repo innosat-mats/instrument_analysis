@@ -105,7 +105,7 @@ for n in range(1+n_offset, npatches):
 
     sliced_data.TEMP.values = averaged_data.T
     sliced_data.load().to_netcdf(path=(out_path+orbit_file[:-3] +
-                        f'_avg_x{fwhm_x}y{fwhm_y}z{fwhm_z}_nx{nx}_x0{x0}_x1{x1}.nc'),
+                        f'_avg_x{fwhm_x}y{fwhm_y}z{fwhm_z}_nx{nx}_x0_{x0}_x1_{x1}.nc'),
                         mode="w", format="NETCDF4_CLASSIC")
 
     if last_patch:
