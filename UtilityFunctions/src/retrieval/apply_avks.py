@@ -8,6 +8,7 @@ import time
 import cProfile
 import io
 import pstats
+from halo import Halo
 
 # %% OPTIONS
 
@@ -33,25 +34,23 @@ nx = 500 # pts
 overlap = 100 # pts
 npatches = 60
 
+# loading thingie
+spinner = Halo(text='applying kernels ...', spinner='dots')
+
 for n in range(1, npatches):
 
     data = xr.open_dataset(main_path + orbit_file)
 
-    if n == 1:
-        x0 = (n-1)*(nx-overlap)
-        x1 = (n)*(nx)
+    x0 = (n-1)*(nx-overlap)
+    x1 = (n*nx)-(n-1)*overlap
 
-    else:
-        x0 = (n-1)*(nx-overlap)
-        x1 = (n)*(nx)
-
-        if x1 > len(data.x)-1:
-            x1 = len(data.x)-1
-            last_patch = True
-            print(f'warning: (final) patch to be computed is smaller than {nx} pts')
+    if x1 > len(data.x)-1:
+        x1 = len(data.x)-1
+        last_patch = True
+        print(f'\nWARNING: (final) patch to be computed is smaller than {nx} pts')
 
     # %% READ DATA
-    print(f'initiating patch {n}; (x0, x1) = ({x0}, {x1})... \n')
+    print(f'\n---- initiating patch {n}; (x0, x1) = ({x0}, {x1}) ----')
     sliced_data = data.isel(time=0, x=slice(0, nx), x_tp=slice(0, nx))
     TEMP = sliced_data.TEMP
 
@@ -71,8 +70,9 @@ for n in range(1, npatches):
         runtime = time.time()
 
     # apply 3D averaging kernels
-    print('applying kernels... \n')
+    spinner.start()
     averaged_data = apply_3d_kernel(TEMP, x, y, z, [fwhm_x, fwhm_y, fwhm_z], only_kernel=False, pp=parallel)
+    spinner.stop()
 
     # profile only first patch
     if n == 1:
@@ -97,7 +97,7 @@ for n in range(1, npatches):
     averaged_data = np.asarray(averaged_data)
 
     # save data
-    print('saving... \n')
+    print('saving...')
 
     sliced_data.TEMP.values = averaged_data.T
     sliced_data.load().to_netcdf(path=(out_path+orbit_file[:-3] +
@@ -105,5 +105,5 @@ for n in range(1, npatches):
                         mode="w", format="NETCDF4_CLASSIC")
 
     if last_patch:
-        print(f'terminated at patch {n} (end of data)')
+        print(f'---- terminated at patch {n} (end of data) ----')
         break
