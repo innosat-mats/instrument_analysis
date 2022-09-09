@@ -31,13 +31,17 @@ fwhm_x, fwhm_y, fwhm_z = 80, 5, 1
 
 # along-track points
 nx = 500 # pts
+n_offset = 1 #
 overlap = 100 # pts
 npatches = 60
 
 # loading thingie
 spinner = Halo(text='applying kernels ...', spinner='dots')
 
-for n in range(1, npatches):
+# last patch bool
+last_patch = False
+
+for n in range(1+n_offset, npatches):
 
     data = xr.open_dataset(main_path + orbit_file)
 
