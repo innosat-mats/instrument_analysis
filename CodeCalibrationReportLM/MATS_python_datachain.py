@@ -49,7 +49,7 @@ def add_capital_naming_to_header(CCDitem):
     try:
         CCDitem["NCBIN"]
     except:
-        CCDitem["NCBIN"] = CCDitem["NColBinCCD"] 
+        CCDitem["NCBIN"] = CCDitem["NCBIN CCDColumns"] #Changed fron NColBinCCD 220908 by LM
     try:
         CCDitem["NRSKIP"]
     except:
@@ -69,12 +69,12 @@ def add_capital_naming_to_header(CCDitem):
     except:
         CCDitem["TEXPMS"] = CCDitem["Texposure"] 
               
-    
-    # try:
-    #     CCDitem["Gain"]
-    # except:
-    #     CCDitem["Gain"] = CCDitem["GAIN Truncation"]
-    CCDitem["DigGain"] = CCDitem["Gain"]
+
+    try:
+        CCDitem["DigGain"] = CCDitem["GAIN Truncation"]
+    except:
+        CCDitem["DigGain"] = CCDitem["GAIN"] & 0b1111
+    #Used to be the following but I think that is wrong LM220909: CCDitem["DigGain"] = CCDitem["Gain"]
     
     
     try:

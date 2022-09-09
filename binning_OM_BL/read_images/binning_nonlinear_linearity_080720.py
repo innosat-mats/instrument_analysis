@@ -28,10 +28,10 @@ def bin_ref(ref, ccd):
         # simple code for binning
         
         nrow, ncol, nrskip, ncskip, nrbin, ncbin = (ccd['NROW'], ccd['NCOL']+1,
-                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'])
+                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NCBIN CCDColumns'])
         
         nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr = (ref['NROW'], ref['NCOL']+1,
-                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'])
+                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NCBIN CCDColumns'])
     
         # reference image that will be binned according to 'ccd' settings
         imgref = ref['IMAGE']
@@ -67,10 +67,10 @@ def bin_ref_FPGA(ref, ccd):
         # simple code for binning 
         
         nrow, ncol, nrskip, ncskip, nrbin, ncbin = (ccd['NROW'], ccd['NCOL']+1,
-                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], 2**ccd['NColBinFPGA'])
+                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NCBIN FPGAColumns'])
         
         nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr = (ref['NROW'], ref['NCOL']+1,
-                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], 2**ref['NColBinFPGA'])
+                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ['NCBIN FPGAColumns'])
     
         # reference image that will be binned according to 'ccd' settings
         imgref = ref['IMAGE']
@@ -188,7 +188,7 @@ for list_name in list_names:
         if list_name == 'fpga.txt':
             meanb_fpga.append(binned[i].mean())
             meanc_fpga.append(ccdimg.mean())
-            bins_fpga.append(2**bin_input[i]['NColBinFPGA'])
+            bins_fpga.append(bin_input[i]['NCBIN FPGAColumns'])
             
             # with dark
             means_fpga.append(CCDs_list[i]['IMAGE'].mean())
@@ -206,7 +206,7 @@ for list_name in list_names:
         if list_name == 'column.txt':
             meanb_column.append(binned[i].mean())
             meanc_column.append(ccdimg.mean())
-            bins_column.append(bin_input[i]['NColBinCCD'])
+            bins_column.append(bin_input[i]['NCBIN CCDColumns'])
             
             # with dark
             means_column.append(CCDs_list[i]['IMAGE'].mean())

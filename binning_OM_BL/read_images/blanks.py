@@ -72,12 +72,12 @@ for list_name in list_names:
             plt.scatter(CCDs_list[i]['NRBIN'],CCDs_list[i]['LBLNK'], color='blue', marker='o')
             #plt.scatter(CCDs_list[i]['NRBIN'],CCDs_list[i]['TBLNK']-CCDd_list[i]['TBLNK'], color='blue', marker='o')
         else:
-            # plt.scatter(CCDd_list[i]['NColBinCCD'],CCDd_list[i]['TBLNK'], color='red', marker='x')
-            # plt.scatter(CCDs_list[i]['NColBinCCD'],CCDs_list[i]['TBLNK'], color='red', marker='o')
+            # plt.scatter(CCDd_list[i]['NCBIN CCDColumns'],CCDd_list[i]['TBLNK'], color='red', marker='x')
+            # plt.scatter(CCDs_list[i]['NCBIN CCDColumns'],CCDs_list[i]['TBLNK'], color='red', marker='o')
             
-            plt.scatter(CCDd_list[i]['NColBinCCD'],CCDd_list[i]['LBLNK'], color='red', marker='x')
-            plt.scatter(CCDs_list[i]['NColBinCCD'],CCDs_list[i]['LBLNK'], color='red', marker='o')
-            #plt.scatter(CCDs_list[i]['NColBinCCD'],CCDs_list[i]['TBLNK']-CCDd_list[i]['TBLNK'], color='red', marker='o')
+            plt.scatter(CCDd_list[i]['NCBIN CCDColumns'],CCDd_list[i]['LBLNK'], color='red', marker='x')
+            plt.scatter(CCDs_list[i]['NCBIN CCDColumns'],CCDs_list[i]['LBLNK'], color='red', marker='o')
+            #plt.scatter(CCDs_list[i]['NCBIN CCDColumns'],CCDs_list[i]['TBLNK']-CCDd_list[i]['TBLNK'], color='red', marker='o')
     
     
     # for i in range(0, len(CCDd_list)-2):

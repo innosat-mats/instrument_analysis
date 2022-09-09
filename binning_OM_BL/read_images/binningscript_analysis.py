@@ -31,10 +31,10 @@ def bin_ref(ref, ccd):
         # simple code for binning
         
         nrow, ncol, nrskip, ncskip, nrbin, ncbin, exptime = (ccd['NROW'], ccd['NCOL']+1,
-                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'],ccd['TEXPMS'])
+                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NCBIN CCDColumns'],ccd['TEXPMS'])
         
         nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr, exptimer = (ref['NROW'], ref['NCOL']+1,
-                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'],ref['TEXPMS'])
+                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NCBIN CCDColumns'],ref['TEXPMS'])
     
         exptimefactor = int((exptime-2000)/(exptimer-2000))
         # reference image that will be binned according to 'ccd' settings
@@ -72,10 +72,10 @@ def bin_ref_FPGA(ref, ccd):
     
         # simple code for binning 
         nrow, ncol, nrskip, ncskip, nrbin, ncbin, exptime = (ccd['NROW'], ccd['NCOL']+1,
-                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NColBinCCD'],ccd['TEXPMS'])
+                ccd['NRSKIP'], ccd['NCSKIP'], ccd['NRBIN'], ccd['NCBIN CCDColumns'],ccd['TEXPMS'])
         
         nrowr, ncolr, nrskipr, ncskipr, nrbinr, ncbinr, exptimer = (ref['NROW'], ref['NCOL']+1,
-                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NColBinCCD'],ref['TEXPMS'])
+                ref['NRSKIP'], ref['NCSKIP'], ref['NRBIN'], ref['NCBIN CCDColumns'],ref['TEXPMS'])
     
         exptimefactor = int((exptime-2000)/(exptimer-2000))
         # reference image that will be binned according to 'ccd' settings
@@ -168,7 +168,7 @@ for i in range(0,len(CCDs_list)):
     fig.colorbar(im, ax=axs[i])
     im.set_clim(mean-2*std,mean+2*std)
     axs[i].set_title('short: ' + str(CCDs_list[i]['NRBIN']) + 'x' 
-                      + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']))
+                      + str(CCDs_list[i]['NCBIN CCDColumns']*CCDs_list[i]['NCBIN FPGAColumns']))
     
     im = axs[i+len(CCDs_list)].imshow(CCDl_list[i]['IMAGE'],cmap='jet')
     mean=CCDl_list[i]['IMAGE'].mean()
@@ -176,7 +176,7 @@ for i in range(0,len(CCDs_list)):
     fig.colorbar(im, ax=axs[i+len(CCDs_list)])
     im.set_clim(mean-2*std,mean+2*std)
     axs[i+len(CCDs_list)].set_title('long: ' + str(CCDs_list[i]['NRBIN']) + 'x' 
-                      + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']))
+                      + str(CCDs_list[i]['NCBIN CCDColumns']*CCDs_list[i]['NCBIN FPGAColumns']))
 
 # SUBTRACT DARK IMAGES
 CCDl_sub_img,CCDr_sub_img = [],[]
@@ -202,7 +202,7 @@ for i in range(0,len(CCDs_list)):
     fig1.colorbar(im, ax=axs1[i])
     im.set_clim(mean-2*std,mean+2*std)
     axs1[i].set_title('long - short: ' + str(CCDs_list[i]['NRBIN']) + 'x' 
-                      + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']))
+                      + str(CCDs_list[i]['NCBIN CCDColumns']*CCDs_list[i]['NCBIN FPGAColumns']))
     
 
 ####################################################
@@ -276,7 +276,7 @@ for i in range(0,len(CCDs_list)):
 #     axs4[i].hist(diff_img.ravel(), bins=binn, alpha=0.6,
 #                 color = "skyblue", label='manual', density=True, range=(mean-3*std,mean+3*std))
 #     axs4[i].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-#                         + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA'])+' man')
+#                         + str(CCDs_list[i]['NCBIN CCDColumns']*CCDs_list[i]['NCBIN FPGAColumns'])+' man')
 #     fig4.suptitle('histogram of instrument-manual')
     
 
@@ -321,11 +321,11 @@ for i in range(0,len(CCDs_list)):
     axs3[i+2*len(CCDs_list)].hist(binned[i][rstart:rstop,cstart:cstop].ravel(), bins=binn, range=(mean_man-3*std_man,mean_man+3*std_man), alpha=0.6, 
                 color='skyblue', label='manual', density=True) 
     axs3[i].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-                        + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA'])+' man')
+                        + str(CCDs_list[i]['NCBIN CCDColumns']*CCDs_list[i]['NCBIN FPGAColumns'])+' man')
     axs3[i+len(CCDs_list)].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-                        + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']) + ' inst')
+                        + str(CCDs_list[i]['NCBIN CCDColumns']*CCDs_list[i]['NCBIN FPGAColumns']) + ' inst')
     axs3[i+2*len(CCDs_list)].set_title(str(CCDs_list[i]['NRBIN']) + 'x'
-                        + str(CCDs_list[i]['NColBinCCD']*2**CCDs_list[i]['NColBinFPGA']) + ' comp')
+                        + str(CCDs_list[i]['NCBIN CCDColumns']*CCDs_list[i]['NCBIN FPGAColumns']) + ' comp')
 
 
 

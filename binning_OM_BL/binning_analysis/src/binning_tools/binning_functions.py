@@ -38,7 +38,7 @@ def bin_ref(ref, ccd):
         ccd["NRSKIP"],
         ccd["NCSKIP"],
         ccd["NRBIN"],
-        ccd["NColBinCCD"],
+        ccd["NCBIN CCDColumns"],
         ccd["TEXPMS"],
     )
 
@@ -48,7 +48,7 @@ def bin_ref(ref, ccd):
         ref["NRSKIP"],
         ref["NCSKIP"],
         ref["NRBIN"],
-        ref["NColBinCCD"],
+        ref["NCBIN CCDColumns"],
         ref["TEXPMS"],
     )
 
@@ -90,7 +90,7 @@ def bin_ref_FPGA(ref, ccd):
         ccd["NRSKIP"],
         ccd["NCSKIP"],
         ccd["NRBIN"],
-        ccd["NColBinCCD"],
+        ccd["NCBIN CCDColumns"],
         ccd["TEXPMS"],
     )
 
@@ -100,7 +100,7 @@ def bin_ref_FPGA(ref, ccd):
         ref["NRSKIP"],
         ref["NCSKIP"],
         ref["NRBIN"],
-        ref["NColBinCCD"],
+        ref["NCBIN CCDColumns"],
         ref["TEXPMS"],
     )
 
