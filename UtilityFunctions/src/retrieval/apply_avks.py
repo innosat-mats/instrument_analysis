@@ -29,61 +29,81 @@ save_npy = False
 fwhm_x, fwhm_y, fwhm_z = 80, 5, 1
 
 # along-track points
-nx = 320
+nx = 500 # pts
+overlap = 100 # pts
+npatches = 60
 
-for nx in [2000]:
-    # %% READ DATA
-    print('initiating... \n')
+for n in range(1, npatches):
+
     data = xr.open_dataset(main_path + orbit_file)
-    data = data.isel(time=0, x=slice(0, nx), x_tp=slice(0, nx))
-    TEMP = data.TEMP
+
+    if n == 1:
+        x0 = (n-1)*(nx-overlap)
+        x1 = (n)*(nx)
+
+    else:
+        x0 = (n-1)*(nx-overlap)
+        x1 = (n)*(nx)
+
+        if x1 > len(data.x)-1:
+            x1 = len(data.x)-1
+            last_patch = True
+            print(f'warning: (final) patch to be computed is smaller than {nx} pts')
+
+    # %% READ DATA
+    print(f'initiating patch {n}; (x0, x1) = ({x0}, {x1})... \n')
+    sliced_data = data.isel(time=0, x=slice(0, nx), x_tp=slice(0, nx))
+    TEMP = sliced_data.TEMP
 
     # %% APPLY TO XN CROSS SECTIONS
     TEMP = TEMP.T.values
-    x = data.x.values
-    y = data.y.values
-    z = data.height.values
+    x = sliced_data.x.values
+    y = sliced_data.y.values
+    z = sliced_data.height.values
 
-    if profiler:
-        # start profiling
-        pr = cProfile.Profile()
-        pr.enable()
+    # profile only first patch
+    if n == 1:
+        if profiler:
+            # start profiling
+            pr = cProfile.Profile()
+            pr.enable()
 
-    runtime = time.time()
+        runtime = time.time()
 
     # apply 3D averaging kernels
     print('applying kernels... \n')
     averaged_data = apply_3d_kernel(TEMP, x, y, z, [fwhm_x, fwhm_y, fwhm_z], only_kernel=False, pp=parallel)
 
-    elapsed = time.time() - runtime
+    # profile only first patch
+    if n == 1:
+        elapsed = time.time() - runtime
+        if profiler:
+            # end profiling
+            pr.disable()
+            pr.print_stats(sort='time')
 
-    if profiler:
-        # end profiling
-        pr.disable()
-        pr.print_stats(sort='time')
+            # save profiler data
+            s = io.StringIO()
+            ps = pstats.Stats(pr, stream=s).sort_stats('tottime')
+            ps.print_stats()
+            with open("/home/waves/projects/instrument_analysis/UtilityFunctions/src/retrieval/logs/profile.txt", 'w+') as f:
+                f.write(s.getvalue())
 
-        # save profiler data
-        s = io.StringIO()
-        ps = pstats.Stats(pr, stream=s).sort_stats('tottime')
-        ps.print_stats()
-        with open("/home/waves/projects/instrument_analysis/UtilityFunctions/src/retrieval/logs/profile.txt", 'w+') as f:
-            f.write(s.getvalue())
-
-    # save nx - time data
-    with open("/home/waves/projects/instrument_analysis/UtilityFunctions/src/retrieval/logs/time.txt", "ab") as f:
-        np.savetxt(f, np.c_[nx, elapsed])
+        # save nx - time data
+        with open("/home/waves/projects/instrument_analysis/UtilityFunctions/src/retrieval/logs/time.txt", "ab") as f:
+            np.savetxt(f, np.c_[nx, elapsed])
 
     # convert from list to array
     averaged_data = np.asarray(averaged_data)
 
     # save data
     print('saving... \n')
-    if save_npy:
-        np.save(out_path + orbit_file[:-3] + f'_avg_x{fwhm_x}y{fwhm_y}z{fwhm_z}_nx{nx}',
-                averaged_data)
 
-    else:
-        data.TEMP.values = averaged_data.T
-        data.load().to_netcdf(path=(out_path+orbit_file[:-3] +
-                            f'_avg_x{fwhm_x}y{fwhm_y}z{fwhm_z}_nx{nx}.nc'),
-                            mode="w", format="NETCDF4_CLASSIC")
+    sliced_data.TEMP.values = averaged_data.T
+    sliced_data.load().to_netcdf(path=(out_path+orbit_file[:-3] +
+                        f'_avg_x{fwhm_x}y{fwhm_y}z{fwhm_z}_nx{nx}_x0{x0}_x1{x1}.nc'),
+                        mode="w", format="NETCDF4_CLASSIC")
+
+    if last_patch:
+        print(f'terminated at patch {n} (end of data)')
+        break
