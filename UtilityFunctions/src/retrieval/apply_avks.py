@@ -15,7 +15,7 @@ from halo import Halo
 # file information
 main_path = "/home/waves/projects/hiamcm-juwave/data/fsps/test_orbits_atm/MATS_orbit_data/no_mid_track/"
 orbit_file = "mats_orbit_12t_D5844_97.6_ls0_0600UTZ01JAN2016_spline.nc"
-out_path = "/home/waves/projects/hiamcm-juwave/data/fsps/test_orbits_atm/MATS_avg_orbit_data/"
+out_path = "/home/waves/projects/hiamcm-juwave/data/fsps/test_orbits_atm/MATS_avg_orbit_data/patches/"
 
 # parallel processing 
 parallel = True
@@ -31,9 +31,9 @@ fwhm_x, fwhm_y, fwhm_z = 80, 5, 1
 
 # along-track points
 nx = 500 # pts
-n_offset = 1 #
+n_offset = 0 #
 overlap = 100 # pts
-npatches = 60
+npatches = 600
 
 # loading thingie
 spinner = Halo(text='applying kernels ...', spinner='dots')
@@ -55,7 +55,7 @@ for n in range(1+n_offset, npatches):
 
     # %% READ DATA
     print(f'\n---- initiating patch {n}; (x0, x1) = ({x0}, {x1}) ----')
-    sliced_data = data.isel(time=0, x=slice(0, nx), x_tp=slice(0, nx))
+    sliced_data = data.isel(time=0, x=slice(x0, x1), x_tp=slice(x0, x1))
     TEMP = sliced_data.TEMP
 
     # %% APPLY TO XN CROSS SECTIONS
