@@ -36,7 +36,8 @@ overlap = 100 # pts
 npatches = 600
 
 # loading thingie
-spinner = Halo(text='applying kernels ...', spinner='dots')
+spinner_compute = Halo(text='applying kernels...', spinner='dots')
+spinner_save = Halo(text='saving...', spinner='dots')
 
 # last patch bool
 last_patch = False
@@ -74,9 +75,9 @@ for n in range(1+n_offset, npatches):
         runtime = time.time()
 
     # apply 3D averaging kernels
-    spinner.start()
+    spinner_compute.start()
     averaged_data = apply_3d_kernel(TEMP, x, y, z, [fwhm_x, fwhm_y, fwhm_z], only_kernel=False, pp=parallel)
-    spinner.stop()
+    spinner_compute.succeed()
 
     # profile only first patch
     if n == 1:
@@ -101,12 +102,14 @@ for n in range(1+n_offset, npatches):
     averaged_data = np.asarray(averaged_data)
 
     # save data
-    print('saving...')
+    spinner_save.start()
 
     sliced_data.TEMP.values = averaged_data.T
     sliced_data.load().to_netcdf(path=(out_path+orbit_file[:-3] +
                         f'_avg_x{fwhm_x}y{fwhm_y}z{fwhm_z}_nx{nx}_x0_{x0}_x1_{x1}.nc'),
                         mode="w", format="NETCDF4_CLASSIC")
+
+    spinner_save.succeed()
 
     if last_patch:
         print(f'---- terminated at patch {n} (end of data) ----')
