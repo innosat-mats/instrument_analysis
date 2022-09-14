@@ -55,6 +55,17 @@ for i in range(1,len(files)):
 
 data = rename_dim(data, dim1='x', dim2='x_tp')
 
+# correct lost time dim (from applying kernels)
+list_time_dims = ('DENS', 'N2_SMOOTH', 'PRES', 'TEMP', 'TEMP_BACKGROUND','TEMP_RESIDUAL', 'U',
+                'U_BACKGROUND', 'U_RESIDUAL', 'V', 'V_BACKGROUND', 'V_RESIDUAL',
+                'W', 'W_BACKGROUND', 'W_RESIDUAL')
+
+for dim in list_time_dims:
+    data[dim] = data[dim].expand_dims('time')
+
+# transpose to match (t, z, y, x, xtp)
+data = data.transpose('time','height','y','x', 'x_tp')
+
 # generate name and save
 print(f'-------- all {len(files)} orbit patches merged ----------')
 save_spin.start()
