@@ -50,9 +50,7 @@ for i in range(1,len(files)):
     temp = xr.open_dataset(f'{dir}/{files[i]}')
     temp = temp.isel(x=slice(int(overlap/2),end), x_tp=slice(int(overlap/2),end))
     temp = rename_dim(temp)
-    #temp = temp.assign_coords(x_tp=np.arange(x0,x1))
     data = xr.concat([data, temp], dim='x')
-    #x0, x1 = (x0 + 400), (x1 + 400)
     merge_spin.succeed()
 
 data = rename_dim(data, dim1='x', dim2='x_tp')
