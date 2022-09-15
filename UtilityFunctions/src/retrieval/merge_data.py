@@ -40,6 +40,7 @@ print(f'-------- merging {len(files)} orbit patches ----------')
 print(f'----------- approx. {len(files)*400*20 / 40000} orbits -------------')
 
 data = xr.open_dataset(f'{dir}/{files[0]}')
+xattrs = data.x.attrs
 data = data.isel(x=slice(0,end), x_tp=slice(0,end))
 data = rename_dim(data)
 
@@ -65,6 +66,7 @@ for dim in list_time_dims:
 
 # transpose to match (t, z, y, x, xtp)
 data = data.transpose('time','height','y','x', 'x_tp')
+data.x.attrs = xattrs
 
 # generate name and save
 print(f'-------- all {len(files)} orbit patches merged ----------')

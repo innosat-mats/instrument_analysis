@@ -31,7 +31,7 @@ fwhm_x, fwhm_y, fwhm_z = 80, 5, 1
 
 # along-track points
 nx = 500 # pts
-n_offset = 0 #
+n_offset = 35 #
 overlap = 100 # pts
 npatches = 600
 
