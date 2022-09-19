@@ -27,11 +27,11 @@ profiler = False
 save_npy = False
 
 # fwhm (km)
-fwhm_x, fwhm_y, fwhm_z = 80, 5, 1
+fwhm_x, fwhm_y, fwhm_z = 60, 20, 2
 
 # along-track points
 nx = 500 # pts
-n_offset = 35 #
+n_offset = 0 #
 overlap = 100 # pts
 npatches = 600
 
