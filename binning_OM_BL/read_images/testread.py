@@ -10,12 +10,8 @@ Created on Thu Apr 23 13:33:31 2020
 import sys
 
 
-from mats_l1_processing.LindasCalibrationFunctions import (
-    plotCCDitem,
-    read_all_files_in_protocol,
-)
-
-
+from mats_l1_processing.experimental_utils import read_all_files_in_protocol
+from mats_l1_processing.experimental_utils import plotCCDitem
 from mats_l1_processing.read_in_functions import add_temperature_info_to_CCDitems
 
 import matplotlib.pyplot as plt

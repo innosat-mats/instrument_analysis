@@ -11,7 +11,7 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 
-#from LindasCalibrationFunctions import plot_CCDimage
+#from experimental_utils import plot_CCDimage
 
 
 def plot_CCDimage(image, fig, axis, title="", clim=999):

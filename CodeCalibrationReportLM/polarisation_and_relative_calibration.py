@@ -6,8 +6,8 @@ Created on Thu Oct 28 10:13:48 2021
 @author: lindamegner
 """
 
-from mats_l1_processing.LindasCalibrationFunctions import plot_CCDimage, read_all_files_in_protocol, plotCCDitem
-from mats_l1_processing.read_in_functions import readprotocol
+from mats_l1_processing.experimental_utils import plot_CCDimage, read_all_files_in_protocol, plotCCDitem
+from mats_l1_processing.experimental_utils import readprotocol
 import matplotlib.pyplot as plt
 from mats_l1_processing.L1_calibrate import L1_calibrate
 from mats_l1_processing.L1_calibration_functions import (

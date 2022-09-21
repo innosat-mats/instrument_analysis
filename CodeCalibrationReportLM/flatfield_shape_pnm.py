@@ -12,7 +12,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 
-from mats_l1_processing.LindasCalibrationFunctions import plot_CCDimage
+from mats_l1_processing.experimental_utils import plot_CCDimage
 
 # def plot_CCDimage(image, fig, axis, title="", clim=999):
 #     import numpy as np

@@ -8,17 +8,17 @@ Created on Thu Apr 23 13:33:31 2020
 
 
 
-from mats_l1_processing.LindasCalibrationFunctions import  plotCCDitem
+from mats_l1_processing.experimental_utils import  plotCCDitem
 
 
 
 from mats_l1_processing.read_in_functions import read_all_files_in_root_directory
 import matplotlib.pyplot as plt
 from mats_l1_processing.L1_calibrate import L1_calibrate
-from mats_l1_processing.LindasCalibrationFunctions import plot_CCDimage
+from mats_l1_processing.experimental_utils import plot_CCDimage
 #directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/BinningFlatfieldsIR3_210910/'
 #directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/RacFiles_210906-210910/'
-directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/LaserAlignmentTest_RacFiles0909Duplicated/'
+directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/LaserAlignmentTest_RacFiles0909to0910Duplicated/'
 
 
 #directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/IR3_linearity_binning_211018/'
@@ -38,7 +38,7 @@ plot=True
 
 if calibrate:
     for CCDitem in CCDitems[:3]:
-        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp =L1_calibrate(CCDitem, calibration_file)
+        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp, image_common_fov, errors =L1_calibrate(CCDitem, calibration_file)
 
         if plot==True:
             fig,ax=plt.subplots(5,1)

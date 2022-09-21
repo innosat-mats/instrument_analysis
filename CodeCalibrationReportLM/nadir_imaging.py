@@ -8,11 +8,11 @@ Created on Thu Apr 23 13:33:31 2020
 
 
 
-#from LindasCalibrationFunctions import  plotCCDitem
+#from  import  plotCCDitem
 
 
-from  mats_l1_processing.LindasCalibrationFunctions import plot_CCDimage,plotCCDitem, read_all_files_in_protocol 
-from  mats_l1_processing.read_in_functions import readprotocol
+from  mats_l1_processing.experimental_utils import plot_CCDimage,plotCCDitem, read_all_files_in_protocol 
+from  mats_l1_processing.experimental_utils import readprotocol
 import matplotlib.pyplot as plt
 from mats_l1_processing.L1_calibrate import L1_calibrate
 
@@ -67,7 +67,7 @@ for CCDitem in CCDitems:
     
     if calibrate:
  
-        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp =L1_calibrate(CCDitem)
+        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp, image_common_fov, errors =L1_calibrate(CCDitem)
 
         fig,ax=plt.subplots(5,1)
         plot_CCDimage(image_lsb,fig, ax[0], 'Original LSB')    

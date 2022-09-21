@@ -19,12 +19,18 @@ from mats_l1_processing.get_temperature import create_temperature_info_array, ad
 from mats_l1_processing.L1_calibration_functions import desmear_true_image
 import datetime 
 from cali_ReadJorgsFiles import readjorgfile
-from mats_l1_processing.LindasCalibrationFunctions import UniqueValuesInKey
-from mats_l1_processing.LindasCalibrationFunctions import plot_CCDimage, plot_CCDimage_hmean
+from mats_l1_processing.experimental_utils import plot_CCDimage, plot_CCDimage_hmean
 
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+def UniqueValuesInKey(listofdicts, keystr):
+    uniqueValues = list()
+    for x in listofdicts:
+        if x[keystr] not in uniqueValues:
+            uniqueValues.append(x[keystr])
+    return uniqueValues
 
 
 # def plot(image,title,darkarea):
@@ -158,7 +164,7 @@ for ifile, picdirname in enumerate(picdirnames):
     retrieval_dir='/Users/lindamegner/MATS/retrieval/Level0/MATS-L0-processing-master/'
     
     
-    
+    raise Exception('The code below until line 190 is now 220919 broken. read_CCDitems takes only one argument , the directorym and an optional one rac or imgview. Temperature info should now be read in automatically. ')
       
     if read_from=='rac':
         CCDitems=read_CCDitems(rac_image_json_file,rac_sub_dir, retrieval_dir)
@@ -182,6 +188,9 @@ for ifile, picdirname in enumerate(picdirnames):
         CCDitem['read_from']=read_from
         CCDitem=add_temperature_info(CCDitem,temperaturedata,relativetimedata,labtemp)
         timestamp=epoch+datetime.timedelta(0,CCDitem['reltime'])
+        
+        
+        
         
     #    print(timestamp)
     #    print(CCDitem['temperature'])

@@ -19,8 +19,8 @@ import os
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
-from LindasCalibrationFunctions import plotCCDitem
-from LindasCalibrationFunctions import plot_simple
+from experimental_utils import plotCCDitem
+from experimental_utils import plot_simple
 from read_in_functions import read_CCDitem_from_imgview, readimageviewpics
 from L1_calibration_functions import get_true_image_remove, desmear_true_image_remove, desmear_true_image
 import copy

@@ -10,10 +10,10 @@ Created on Tue Oct 20 09:33:32 2020
     
 
 from mats_l1_processing.L1_calibration_functions import compensate_bad_columns #,  get_true_image
-from mats_l1_processing.read_in_functions import read_all_files_in_directory
+from mats_l1_processing.read_in_functions import read_CCDitems
 import matplotlib.pyplot as plt
 import numpy as np
-from mats_l1_processing.LindasCalibrationFunctions import  plot_CCDimage   
+from mats_l1_processing.experimental_utils import  plot_CCDimage   
 
 
 def columnbin(image,binsize):
@@ -72,7 +72,7 @@ def doublediffplot(fig,ax,image1, image2, title1, title2, clim=999, climdiff=999
     return
 
 def read_all_files_in_RacFiles_out(directory):
-    CCDitems=read_all_files_in_directory('rac',directory+'RacFiles_out/')
+    CCDitems=read_CCDitems(directory+'RacFiles_out/')
     return CCDitems
     
 

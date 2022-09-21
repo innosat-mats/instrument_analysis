@@ -7,8 +7,8 @@ Created on Thu Feb 18 12:49:15 2021
 """
 
 
-from mats_l1_processing.LindasCalibrationFunctions import read_files_in_protocol_as_ItemsUnits
-from mats_l1_processing.read_in_functions import readprotocol
+from mats_l1_processing.items_units_functions import read_files_in_protocol_as_ItemsUnits
+from mats_l1_processing.experimental_utils import readprotocol
 from matplotlib import pyplot as plt
 import numpy as np
 

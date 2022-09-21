@@ -18,8 +18,8 @@ import glob
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import kde
-from LindasCalibrationFunctions import plotCCDitem
-from LindasCalibrationFunctions import plot_simple
+from experimental_utils import plotCCDitem
+from experimental_utils import plot_simple
 from L1_calibration_functions import desmear_true_image
 import copy
 import read_in_functions

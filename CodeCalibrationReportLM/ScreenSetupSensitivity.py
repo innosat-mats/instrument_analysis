@@ -10,8 +10,8 @@ Created on Thu Apr 23 13:33:31 2020
 
 
 
-from mats_l1_processing.LindasCalibrationFunctions import plot_CCDimage,read_all_files_in_protocol 
-from mats_l1_processing.read_in_functions import readprotocol 
+from mats_l1_processing.experimental_utils import plot_CCDimage,read_all_files_in_protocol 
+from mats_l1_processing.experimental_utils import readprotocol 
 import matplotlib.pyplot as plt
 
 
