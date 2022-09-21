@@ -38,7 +38,7 @@ plot=True
 
 if calibrate:
     for CCDitem in CCDitems[:3]:
-        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp, image_common_fov, errors =L1_calibrate(CCDitem, calibration_file)
+        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp, image_calibrated, image_common_fov, errors =L1_calibrate(CCDitem, calibration_file)
 
         if plot==True:
             fig,ax=plt.subplots(5,1)

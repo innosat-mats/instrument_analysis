@@ -48,7 +48,7 @@ for CCDitem in CCDitems[:]:
      
     if calibrate:
  
-        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp, image_common_fov, errors =L1_calibrate(CCDitem, instrument)
+        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp, image_calibrated, image_common_fov, errors =L1_calibrate(CCDitem, instrument)
 
         fig,ax=plt.subplots(5,1)
         plot_CCDimage(image_lsb,fig, ax[0], 'Original LSB')    
