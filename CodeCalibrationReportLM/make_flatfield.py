@@ -11,7 +11,6 @@ This script produced morfed images between the flatfield without baffle taken at
 
 import numpy as np
 from PIL import Image
-from mats_l1_processing.L1_calibration_functions import (read_flatfield,CCD)
 from mats_l1_processing.experimental_utils import plot_CCDimage,read_all_files_in_protocol    
 from mats_l1_processing.experimental_utils import readprotocol 
 import matplotlib.pyplot as plt

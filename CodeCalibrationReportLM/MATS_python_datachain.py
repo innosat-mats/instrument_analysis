@@ -9,16 +9,30 @@ Created on Thu Jun 27 09:34:19 2019
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Use from L1_functions 
-#from L1_functions import readimgpath, predict_image, get_true_image, desmear_true_image, compensate_bad_columns, get_true_image_from_compensated
 
 
 
 # Use from L1_calibration_functions
-from mats_l1_processing.L1_calibration_functions import  get_true_image, desmear_true_image, compensate_bad_columns,predict_image, readimgpath, get_true_image_from_compensated
+from mats_l1_processing.L1_calibration_functions import  get_true_image, desmear_true_image
+from mats_l1_processing.experimental_utils import predict_image, compensate_bad_columns
+from database_generation.read_in_imgview_functions import readimgpath # LM The function readimgpath was duplicated in mats_l1_processing but deleted there 20220927
 
+def get_true_image_from_compensated(image, header):
 
+    # calculate true image by removing readout offset, pixel blank value and
+    # normalising the signal level according to readout time
 
+    # remove gain
+    true_image = image * 2 ** (int(header["Gain"]) & 255)
+
+    for j_c in range(0, int(header["NCol"]) + 1):  # LM201102 Big fix +1 added
+        true_image[0 : header["NRow"], j_c] = (
+            true_image[0 : header["NRow"], j_c]
+            - header["NCBIN FPGAColumns"] * (header["BlankTrailingValue"] - 128)
+            - 128
+        )
+
+    return true_image
 
 def add_capital_naming_to_header(CCDitem):
     try:

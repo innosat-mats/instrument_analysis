@@ -33,12 +33,12 @@ CCDitems=read_all_files_in_root_directory(read_from,directory)
 
 calibration_file='/Users/lindamegner/MATS/retrieval/git/MATS-L1-processing/scripts/calibration_data_linda.toml'
 
-calibrate=False
+calibrate=True
 plot=True
 
 if calibrate:
     for CCDitem in CCDitems[:3]:
-        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_flatf_comp, image_calibrated, image_common_fov, errors =L1_calibrate(CCDitem, calibration_file)
+        image_lsb,image_bias_sub,image_desmeared, image_dark_sub, image_calib_nonflipped, image_calibrated, image_common_fov, errors =L1_calibrate(CCDitem, calibration_file)
 
         if plot==True:
             fig,ax=plt.subplots(5,1)
@@ -46,7 +46,7 @@ if calibrate:
             plot_CCDimage(image_bias_sub,fig, ax[1], 'Bias subtracted')  
             plot_CCDimage(image_desmeared,fig, ax[2],' Desmeared LSB')  
             plot_CCDimage(image_dark_sub,fig, ax[3], ' Dark current subtracted LSB')  
-            plot_CCDimage(image_flatf_comp,fig, ax[4], ' Flat field compensated LSB')         
+            plot_CCDimage(image_calib_nonflipped,fig, ax[4], ' Flat field compensated LSB')         
             fig.suptitle(CCDitem['channel'])
 
 else:    

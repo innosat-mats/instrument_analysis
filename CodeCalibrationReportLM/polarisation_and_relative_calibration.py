@@ -16,7 +16,7 @@ from mats_l1_processing.L1_calibration_functions import (
     desmear_true_image,
     CCD,
     subtract_dark,
-    compensate_flatfield,
+    flatfield_calibration,
     get_linearized_image,
 )
 

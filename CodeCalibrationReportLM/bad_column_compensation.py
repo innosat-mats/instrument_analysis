@@ -9,11 +9,10 @@ Created on Tue Oct 20 09:33:32 2020
 
     
 
-from mats_l1_processing.L1_calibration_functions import compensate_bad_columns #,  get_true_image
 from mats_l1_processing.read_in_functions import read_CCDitems
 import matplotlib.pyplot as plt
 import numpy as np
-from mats_l1_processing.experimental_utils import  plot_CCDimage   
+from mats_l1_processing.experimental_utils import  plot_CCDimage, compensate_bad_columns
 
 
 def columnbin(image,binsize):
