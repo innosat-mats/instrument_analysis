@@ -1,0 +1,23 @@
+<command mnemonic="TC_pafCCD">
+	<relativeTime>0</relativeTime>
+	<comment>TurnONCCDs</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">127</tcArgument>
+		<tcArgument mnemonic="PWR">1</tcArgument>
+		<tcArgument mnemonic="WDW">7</tcArgument>
+		<tcArgument mnemonic="JPEGQ">100</tcArgument>
+		<tcArgument mnemonic="SYNC">0</tcArgument>
+		<tcArgument mnemonic="TEXPIMS">6000</tcArgument>
+		<tcArgument mnemonic="TEXPMS">0</tcArgument>
+		<tcArgument mnemonic="GAIN">0</tcArgument>
+		<tcArgument mnemonic="NFLUSH">1023</tcArgument>
+		<tcArgument mnemonic="NRSKIP">0</tcArgument>
+		<tcArgument mnemonic="NRBIN">1</tcArgument>
+		<tcArgument mnemonic="NROW">1</tcArgument>
+		<tcArgument mnemonic="NCSKIP">0</tcArgument>
+		<tcArgument mnemonic="NCBIN">1</tcArgument>
+		<tcArgument mnemonic="NCOL">1</tcArgument>
+		<tcArgument mnemonic="NCBINFPGA">0</tcArgument>
+		<tcArgument mnemonic="SIGMODE">1</tcArgument>
+	</tcArguments>
+</command>	
