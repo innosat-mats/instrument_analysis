@@ -10,7 +10,7 @@ This is more or less a duplicate of read_and_calibrate_all_files_in_directory bu
 """
 
 from mats_l1_processing.experimental_utils import plotCCDitem
-from plotting.sort_images import sort_images_in_dirs, sort_images_plot
+from sort_images import sort_images_in_dirs, sort_images_plot
 from mats_l1_processing.read_in_functions import read_CCDitems
 import matplotlib.pyplot as plt
 
@@ -74,8 +74,9 @@ def calibrate_CCDitems(CCDitems,instrument, plot=False):
 
 #binned images with nskip
 #directory='/Users/lindamegner/MATS/retrieval/git/MATS-L1-processing/testdata/binning_test_20200812/RacFiles_out/'
-directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/LaserAlignmentTest_RacFiles0909to0910Duplicated/RacFiles_out/'
+#directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/LaserAlignmentTest_RacFiles0909to0910Duplicated/RacFiles_out/'
 
+directory='/Users/lindamegner/MATS/retrieval/FlightData/221109_first_images/RacFiles_out/'
 
 calibration_file='/Users/lindamegner/MATS/retrieval/git/MATS-L1-processing/scripts/calibration_data_linda.toml'
 channels=['IR1', 'IR2','IR3', 'IR4','UV1','UV2','NADIR']
@@ -95,18 +96,20 @@ if calibrate:
 
 
 #Select and plot data
-#key_value_dict = {'channel': 'IR1'}
-key_value_dict = {'channel': 'IR4', 'TEXPMS': 2000}
+key_value_dict = {'channel': 'IR1'}
+#key_value_dict = {'channel': 'IR4', 'TEXPMS': 2000}
+
 
 
 plotdir=directory[:-13]+'plot_dir'
 
-#shutil.rmtree(plotdir)
+shutil.rmtree(plotdir)
 
 os.mkdir(plotdir)
 os.mkdir(plotdir+'/single_images')
-sort_images_in_dirs(CCDitems, key_value_dict, clim=[-50,50], path=plotdir+'/single_images', whattoplot="IMAGE")
+#sort_images_in_dirs(CCDitems, key_value_dict, path=plotdir+'/single_images', whattoplot="image_calibrated")
 
 os.mkdir(plotdir+'/multi_images')
-sort_images_plot(CCDitems, key_value_dict, clim=[-50,50], path=plotdir+'/multi_images', whattoplot="IMAGE")
+
+sort_images_plot(CCDitems, key_value_dict,clim=[-1,10],path=plotdir+'/multi_images', whattoplot="image_calibrated")
 

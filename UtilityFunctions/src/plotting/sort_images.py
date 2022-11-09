@@ -87,7 +87,7 @@ def sort_images_in_dirs(CCDitems, key_value_dict, clim=999, path='.', whattoplot
         dirname=path+'/'+keyval
         CCDitems_select=select_CCDitems(CCDitems,key,value)
         os.mkdir(dirname)
-        plot_CCDitems(CCDitems_select, path=dirname, title=keyval, whattoplot="IMAGE")
+        plot_CCDitems(CCDitems_select, path=dirname, title=keyval, whattoplot=whattoplot)
         
  
         
@@ -126,7 +126,9 @@ def sort_images_plot(CCDitems, key_value_dict, clim=999, path='.', whattoplot="I
         #plot_CCDitems(CCDitems_select, path=dirname, title=keyval)
     if len(CCDitems)>10:
         raise Exception('Too many imgaes to plot in one plot - make a more narrpw selection')
-    fig, ax= plt.subplots(len(CCDitems),1)
+    nr_of_plots=len(CCDitems)
+    if len(CCDitems)==1: nr_of_plots=2
+    fig, ax= plt.subplots(nr_of_plots,1)
     for ind, CCDitem in enumerate(CCDitems):
 
         sp=plot_CCDimage(CCDitem[whattoplot], fig, ax[ind], CCDitem['id']+'_'+keyval,clim)
@@ -206,6 +208,6 @@ def plot_CCDitems(CCDitems, title="", clim=999, aspect="auto", path=".", whattop
         #fig.suptitle(channel)
         #sp.set(visible='False')        
         fig.savefig(path+'/image_'+CCDitem['id']+'.jpg')
-        plt.close(fig)
+        #plt.close(fig)
 
         
