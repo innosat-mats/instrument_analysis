@@ -13,3 +13,4 @@ src/retrieval/__init__.py
 src/retrieval/apply_avks.py
 src/retrieval/averaging_kernels.py
 tests/test_averaging_kernels.py
+tests/test_raw_data.py
