@@ -55,8 +55,8 @@ temperaturedata, relativetimedata = create_temperature_info_array(directory + "/
 plot_full_temperature_info(temperaturedata, relativetimedata)
 
 CCDitems = read_CCDitems(directory)
-if calibrate:
-    calibrate_CCDitems(CCDitems, instrument)
+
 
 fig, ax = plt.subplots(1)
-plotCCDitem(CCDitems[0], fig, ax, title='Fist Image !!!')
+plotCCDitem(CCDitems[0], fig, ax, title='First Image !!!')
+ax.set_aspect('equal')

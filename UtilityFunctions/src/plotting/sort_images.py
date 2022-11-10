@@ -38,6 +38,16 @@ def select_CCDitems(CCDitems, key, value):
     CCDitems_select= list(filter(lambda x: ( x[key]==value),CCDitems))
     return CCDitems_select
 
+def select_CCDitems_using_list(CCDitems, key, valuelist):
+
+    
+    for value in valuelist:
+        CCDitems=select_CCDitems(CCDitems, key, value)
+    
+    return CCDitems
+
+
+
 def select_CCDitems_using_keyvaluedict(CCDitems, key_value_dict):
     """
     
@@ -127,7 +137,7 @@ def sort_images_plot(CCDitems, key_value_dict, clim=999, path='.', whattoplot="I
     if len(CCDitems)>10:
         raise Exception('Too many imgaes to plot in one plot - make a more narrpw selection')
     nr_of_plots=len(CCDitems)
-    if len(CCDitems)==1: nr_of_plots=2
+    if len(CCDitems)==1: nr_of_plots=1
     fig, ax= plt.subplots(nr_of_plots,1)
     for ind, CCDitem in enumerate(CCDitems):
 
