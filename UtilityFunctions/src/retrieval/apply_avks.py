@@ -27,7 +27,7 @@ profiler = False
 save_npy = False
 
 # fwhm (km)
-fwhm_x, fwhm_y, fwhm_z = 60, 20, 2
+fwhm_x, fwhm_y, fwhm_z = 100, 20, 1
 
 # along-track points
 nx = 500 # pts
