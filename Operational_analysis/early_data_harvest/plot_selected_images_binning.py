@@ -10,13 +10,14 @@ This is more or less a duplicate of read_and_calibrate_all_files_in_directory bu
 """
 #%%
 from plotting.sort_images import sort_images_in_dirs, sort_images_plot
-from mats_l1_processing.read_in_functions import read_CCDitems
+from mats_l1_processing.read_in_functions import read_CCDitems,read_CCDdata
 import matplotlib.pyplot as plt
 
 from mats_l1_processing.L1_calibrate import L1_calibrate
 from mats_l1_processing.experimental_utils import plot_CCDimage
 from mats_l1_processing.instrument import Instrument
 import numpy as np
+import pandas as pd
 
 def bin_image(image,nrbin,ncolbin):
 
@@ -80,27 +81,63 @@ def calibrate_CCDitems(CCDitems,instrument, plot=False):
     
 
 
+orbit = 74
+directory='data/Pass' + str(orbit) + '/'
 
-directory='out/'
+CCD = 7
 
 calibration_file='calibration_data_linda.toml'
 
 instrument = Instrument(calibration_file)
 
-calibrate=True  
+calibrate=False  
 
-CCDitems = read_CCDitems(directory)  # read in data
-print('Total number of CCDitems: ',len(CCDitems))
+_,df = read_CCDdata(directory)
 
-if calibrate:
-    calibrate_CCDitems(CCDitems, instrument) #calibrate
+df["EXP Date"] = pd.to_datetime(df["EXP Date"])
+df["TMHeaderTime"] = pd.to_datetime(df["TMHeaderTime"])
 
-binned = bin_image(CCDitems[0]["image_calibrated"],2,2)
 
-# %%
-fig, ax = plt.subplots(1, 1,frameon=False)
-ax.set_aspect('equal')
-ax.axis('off')
-ax.pcolor(CCDitems[0]["image_calibrated"],cmap='gray',clim=[-1,10])
-fig.savefig('IR1.png', format='png', dpi=1200)
+
+
+#%%
+#Check how many images are lost
+fig, ax = plt.subplots(1, 1)
+
+import matplotlib.dates as mdates
+for CCD in [1,2,3,4]:
+    df_ccd = df.loc[df["CCDSEL"] == CCD]
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+    ax.plot(df_ccd["EXP Date"],df_ccd["EXP Nanoseconds"].diff()*1e-9,'.',label=str(CCD))
+
+plt.xlabel('Time')
+plt.ylabel('Diff (time)')
+plt.title('Difference in EXPTIME Orbit ' + str(orbit) + ' CCD: ' + str(CCD))
+plt.legend()
+
+
+# fig, ax = plt.subplots(1, 1)
+# ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+# ax.plot(df["TMHeaderTime"],df["TMHeaderNanoseconds"].diff()*1e-9,'.')
+# plt.xlabel('Time')
+# plt.ylabel('Diff (time)')
+
+# fig, ax = plt.subplots(1, 1)
+# df["EXP Nanoseconds"].diff().hist(bins=50)
+# plt.title('EXP Nanoseconds difference')
+# plt.xlabel('Timedifference')
+
+
+
+
+#items=df.to_dict()
+#CCDitems = []
+#CCDitems = read_CCDitems(directory)  # read in data
+#print('Total number of CCDitems: ',len(CCDitems))
+
+#if calibrate:
+#    calibrate_CCDitems(CCDitems, instrument) #calibrate
+
+
+
 # %%
