@@ -22,9 +22,9 @@ import pandas as pd
 
 
 orbit = 75
-directory='../data/Pass' + str(orbit) + '/'
+directory='/home/olemar/Projects/Universitetet/MATS/instrument_analysis/Operational_analysis/early_data_harvest/data/Pass' + str(orbit) + '/'
 
-calibration_file='../calibration_data_linda.toml'
+calibration_file='/home/olemar/Projects/Universitetet/MATS/instrument_analysis/Operational_analysis/early_data_harvest/calibration_data_linda.toml'
 
 instrument = Instrument(calibration_file)
 
@@ -101,7 +101,7 @@ for i in range(0,long_stab_time):
     print(str(index_of_shift_start) + ' ' + str(index_of_shift_end))
     for j in range(index_of_shift_start,index_of_shift_end):
         print(df_ccd.at[j,"EXP Nanoseconds"])
-        df_ccd.at[j,"EXP Nanoseconds"] = df_ccd.at[j,"EXP Nanoseconds"]-1e9
+        df_ccd.at[j,"EXP Nanoseconds"] = df_ccd.at[j,"EXP Nanoseconds"]-timediff[j]
         print(df_ccd.at[j,"EXP Nanoseconds"])
 
 for i in range(long_stab_time+1,len(timeshift_index)-1):

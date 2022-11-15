@@ -12,7 +12,7 @@ directory='../data/Pass74/'
 calibration_file='../calibration_data_linda.toml'
 
 _,df = read_CCDdata(directory)
-df = df[df.CCDSEL == 5]
+df = df[df.CCDSEL == 3]
 CCDitems = read_CCDitems(directory,items=df.to_dict('records'))
 
 #%%
@@ -34,9 +34,15 @@ for i in range(len(CCDitems)):
     average_image = average_image + CCDitems[i]["image_calibrated"]
 
 average_image = average_image/len(CCDitems)
-average_column = np.mean(average_image[:,10:40],1).shape
-plt.plot(average_image[:,1],np.arange(0,len(average_image[:,1])))
-plt.plot(average_column,np.arange(0,len(average_image[:,1])))
+average_column = np.mean(average_image[:,20:30],1)
+
+#%%
+z = np.arange(0,255)/4+50
+y = 0.8e6*np.exp(-z/10)
+
+plt.plot(y,z)
+plt.plot(average_column,z)
+
 plt.xscale('log')
 
 # %%
