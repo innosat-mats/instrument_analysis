@@ -76,14 +76,14 @@ def calibrate_CCDitems(CCDitems,instrument, plot=False):
 #directory='/Users/lindamegner/MATS/retrieval/git/MATS-L1-processing/testdata/binning_test_20200812/RacFiles_out/'
 #directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/LaserAlignmentTest_RacFiles0909to0910Duplicated/RacFiles_out/'
 
-directory='/Users/lindamegner/MATS/retrieval/FlightData/221109_first_images/RacFiles_out_75/'
+directory='/Users/lindamegner/MATS/retrieval/FlightData/221109_first_images/RacFiles_out_72/'
 
 calibration_file='/Users/lindamegner/MATS/retrieval/git/MATS-L1-processing/scripts/calibration_data_linda.toml'
-channels=['IR1','IR2','IR3','IR4','UV1','UV2','NADIR']
+channels=['IR1','IR2','IR3','IR4','UV1','UV2']
 
 instrument = Instrument(calibration_file)
 
-calibrate=False  
+calibrate=True  
 
 CCDitems = read_CCDitems(directory)  # read in data
 print('Total number of CCDitems: ',len(CCDitems))
@@ -94,92 +94,74 @@ if calibrate:
 
 
 
-plotdir=directory[:-16]+'plot_dir'+directory[-4:]
+plotdir=directory[:-16]+'plot_dir'+directory[-4:-1]+'_cal/'
 
-shutil.rmtree(plotdir)
+#shutil.rmtree(plotdir)
 
 os.mkdir(plotdir)
 os.mkdir(plotdir+'/single_images')
 
-
+full_data=True #Set to false for movies
 
 #Select and plot data
 #key_value_dict = {'channel': 'IR1'}
 #key_value_dict = {'channel': 'IR1', 'channel': '',}
 
 
+climfact= {'IR1': 2.5, 'IR2': 5.,'IR3': 0.5,'IR4': 0.5,'UV1': .15,'UV2': 2.5,'NADIR': 2.,}
+# orbit 74 climfact= {'IR1': 2., 'IR2': 4.,'IR3': 0.5,'IR4': 0.5,'IR1': 2,'UV1': .15,'UV2': 2.5,'NADIR': 2.,}
+#climfact= {'IR1': .075, 'IR2': .13,'IR3': .02,'IR4': .02,'UV1': .1,'UV2': 0.1,'NADIR': 0.1,}
+climfact_cal= {'IR1': 0.8, 'IR2': 0.8,'IR3': 0.6,'IR4': 0.6,'UV1': 0.8,'UV2': 0.8,'NADIR': 1.,}
 
-
-climfact= {'IR1': 2., 'IR2': 4.,'IR3': 0.5,'IR4': 0.5,'IR1': 2,'UV1': 2.,'NADIR': 2.,}
-
+texpmslist=[1000,2000,3000,4000, 5000, 6000,7000, 8000, 9000, 10000, 12000, 
+            13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000 ]
 
 for channel in channels:
     CCDitems_select=select_CCDitems(CCDitems, 'channel',channel)
-    #CCDitems_select=select_CCDitems(CCDitems_select, 'WDW InputDataWindow','15..0')
-    
 
-
-
-          
-#texpmslist=[1000, 3000, 6000, 9000, 12000]
-#winmode=[4, 7, 128]
-#select_CCDitems_using_list(CCDitems, 'TEXPMS', texpmslist)
-    #CCDitems_select=select_CCDitems(CCDitems,key,value)
     dirname=plotdir+'single_images/'+channel
     os.mkdir(dirname)
-    for CCDitem in CCDitems_select:
-        #fig , ax= plt.subplots(1, 1, squeeze=False, frameon=False)
-        fig , ax= plt.subplots(1, 1, frameon=False, figsize=(4, 1))
-        
-        
-        #ax = plt.subplot2grid((2, 1), (0, 0))
-        
-        
-        #fig=plt.figure(figsize=(4, 1))
-        #ax = fig.gca()
-        title=CCDitem['channel']+'_'+str(CCDitem['TEXPMS'])+'_'+CCDitem['WDW InputDataWindow']
-        clim=[0,(climfact[channel]*CCDitem['TEXPMS']+200)]
-        sp=plot_CCDimage(CCDitem['IMAGE'], fig, ax, title=title, clim=clim)
-        #fig.suptitle(channel)
-        #sp.set(visible='False')        
-        #attempt to set aspect ratio to 1
-        #ax.set_aspect(1)
-        
-        #fig.delaxes(ax.flatten()[1])
+    for texpms in texpmslist:
+        CCDitems_select_texpms=select_CCDitems(CCDitems_select, 'TEXPMS',texpms)
+        if len(CCDitems_select_texpms)>0:
+            texpmsdir=dirname+'/texpms_'+str(texpms)
+            os.mkdir(texpmsdir)
+            for CCDitem in CCDitems_select_texpms:
+                if full_data: #set to false for movies
+                    fig , ax= plt.subplots(squeeze=False, frameon=False)
+                    ax = plt.subplot2grid((2, 1), (0, 0))    
+                else:    
+                    fig , ax= plt.subplots(1, 1, frameon=False, figsize=(4, 1))
 
-        plt.close(fig)
-        
-        
-        
-        
-        # info=['id','channel', 'EXP Date','File',
-        #       'JPEGQ', 'NCBIN CCDColumns', 
-        #       'NCOL', 'NRBIN' , 'NROW', 'TBLNK', 'TEMP', 
-        #       'temperature','temperature_ADC','temperature_HTR', 'TEXPMS', 
-        #       'WDW InputDataWindow','WDW Mode']
-        
-        # if CCDitem['NCBIN CCDColumns']>1:
-        #     xpos=-30
-        #     xdiff=-20
-        # else:
-        #     xpos=-70
-        #     xdiff=-40
-        # for ikey in info:
-        #     xpos=xpos+xdiff
-        #     ax.text(0, xpos, ikey+': '+str(CCDitem[ikey]) )
-            
-        fig.savefig(dirname+'/image_'+CCDitem['id']+'.png', dpi=300)
-"""
-
-
-maketree=True
-if maketree:
-    os.mkdir(plotdir+'/single_images')
-    sort_images_in_dirs(CCDitems, key_value_dict, path=plotdir+'/single_images', whattoplot="IMAGE")
-
-makeplot=False
-if makeplot:
-    os.mkdir(plotdir+'/multi_images')
-    sort_images_plot(CCDitems, key_value_dict,path=plotdir+'/multi_images', whattoplot="IMAGE")
-
-"""
+                title='Calibrated signal in $10^{10}$ photons nm$^{-1}$ cm$^{-2}$ s$^{-1}$ str$^{-1}$'
+                CCDitem['channel']+'_'+str(CCDitem['TEXPMS'])+'_'+CCDitem['WDW InputDataWindow']
+                totbin=CCDitem['NCBIN CCDColumns']*CCDitem['NCBIN FPGAColumns']*CCDitem['NRBIN']
+                if totbin!=1:
+                    if calibrate:
+                        clim=[0,climfact_cal[channel]*CCDitem['TEXPMS']]
+                    else:
+                        clim=[0,(climfact[channel]*CCDitem['TEXPMS']+200)]
+                else:
+                    clim=999  
+                sp=plot_CCDimage(CCDitem['image_calibrated'], fig, ax, title=title, clim=clim)
+                        
+                if full_data: #set to false for movies
+                    info=['id','channel', 'EXP Date','File',
+                          'JPEGQ', 'NCBIN CCDColumns', 
+                          'NCOL', 'NRBIN' , 'NROW', 'TBLNK', 'TEMP', 
+                          'temperature','temperature_ADC','temperature_HTR', 'TEXPMS', 
+                          'WDW InputDataWindow','WDW Mode']
+                    
+                    if CCDitem['NCBIN CCDColumns']>1:
+                        xpos=-30
+                        xdiff=-20
+                    else:
+                        xpos=-70
+                        xdiff=-40
+                    for ikey in info:
+                        xpos=xpos+xdiff
+                        ax.text(0, xpos, ikey+': '+str(CCDitem[ikey]) )
+               
+                    #ax.text(0, 20, 'climax: '+str(clim) )
+                fig.savefig(texpmsdir+'/image_'+CCDitem['id']+'.png', dpi=600)
+                plt.close(fig)
