@@ -2,6 +2,7 @@ import os
 import numpy as np
 import xarray as xr
 from halo import Halo
+from natsort import natsorted
 
 # settings
 nx = 500
@@ -33,7 +34,8 @@ def rename_dim(data, dim1 = 'x_tp', dim2 = 'x'):
 
 list_spin.start()
 files =  os.listdir(dir)
-files.sort()
+#files.sort()
+files = natsorted(files)
 list_spin.succeed()
 
 print(f'-------- merging {len(files)} orbit patches ----------')
