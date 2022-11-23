@@ -97,7 +97,7 @@ if calibrate:
 
 plotdir=directory[:-16]+'plot_dir'+directory[-4:-1]+'_cal/'
 
-#shutil.rmtree(plotdir)
+shutil.rmtree(plotdir)
 
 os.mkdir(plotdir)
 os.mkdir(plotdir+'/single_images')
