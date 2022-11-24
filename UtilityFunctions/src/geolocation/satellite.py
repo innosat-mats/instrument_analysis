@@ -35,7 +35,6 @@ def get_position(date,TLE=None):
         TPsza: solar zenith angle at tangent point (degrees)
         TPssa: solar scattering angle at tangent point (degrees)
     """
-
     #Only one TLE, only TP at 92 km
 
     planets=sfapi.load('de421.bsp')
