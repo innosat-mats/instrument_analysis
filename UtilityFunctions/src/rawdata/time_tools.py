@@ -1,5 +1,6 @@
 import datetime as DT
 import numpy as np
+import pandas as pd
 
 def utc_to_onboardTime(utc_date):
     """Function which converts a date in utc into onboard time (GPS) in seconds and rounds to nearest 10th of a second.
@@ -36,3 +37,22 @@ def onboardTime_to_utc(onboardGPSTime):
         utc_date = utc_date.replace(tzinfo=DT.timezone.utc)
 
     return utc_date
+
+
+
+def add_datetime(df):
+    """Converts all times to datetime objects for a MATS dataframe.
+
+    Arguments:
+        df (:obj:`datetime`): dataframe.
+
+    Returns:
+        df (:obj:`datetime`): dataframe with datetimeobjects.
+
+    """
+
+    df['EXP Date'] = pd.to_datetime(df['EXP Date'])
+    df['TMHeaderTime'] = pd.to_datetime(df['TMHeaderTime'])
+    df['RamsesTime'] = pd.to_datetime(df['RamsesTime'])
+
+    return df

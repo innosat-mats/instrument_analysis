@@ -1,0 +1,248 @@
+<command mnemonic="TC_pafMODE">
+	<relativeTime>0</relativeTime>
+	<comment>Instrument to IDLE mode</comment>
+	<tcArguments>
+		<tcArgument mnemonic="MODE">2</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCD">
+	<relativeTime>2</relativeTime>
+	<comment>CCD settings</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">1</tcArgument>
+		<tcArgument mnemonic="PWR">1</tcArgument>
+		<tcArgument mnemonic="WDW">7</tcArgument>
+		<tcArgument mnemonic="JPEGQ">100</tcArgument>
+		<tcArgument mnemonic="SYNC">0</tcArgument>
+		<tcArgument mnemonic="TEXPIMS">62800</tcArgument>
+		<tcArgument mnemonic="TEXPMS">15000</tcArgument>
+		<tcArgument mnemonic="GAIN">0</tcArgument>
+		<tcArgument mnemonic="NFLUSH">1023</tcArgument>
+		<tcArgument mnemonic="NRSKIP">0</tcArgument>
+		<tcArgument mnemonic="NRBIN">1</tcArgument>
+		<tcArgument mnemonic="NROW">511</tcArgument>
+		<tcArgument mnemonic="NCSKIP">0</tcArgument>
+		<tcArgument mnemonic="NCBIN">1</tcArgument>
+		<tcArgument mnemonic="NCOL">2047</tcArgument>
+		<tcArgument mnemonic="NCBINFPGA">0</tcArgument>
+		<tcArgument mnemonic="SIGMODE">1</tcArgument>
+	</tcArguments>
+</command>	
+
+<command mnemonic="TC_pafCCD">
+	<relativeTime>4</relativeTime>
+	<comment>CCD settings</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">2</tcArgument>
+		<tcArgument mnemonic="PWR">1</tcArgument>
+		<tcArgument mnemonic="WDW">7</tcArgument>
+		<tcArgument mnemonic="JPEGQ">100</tcArgument>
+		<tcArgument mnemonic="SYNC">0</tcArgument>
+		<tcArgument mnemonic="TEXPIMS">62800</tcArgument>
+		<tcArgument mnemonic="TEXPMS">15000</tcArgument>
+		<tcArgument mnemonic="GAIN">0</tcArgument>
+		<tcArgument mnemonic="NFLUSH">1023</tcArgument>
+		<tcArgument mnemonic="NRSKIP">0</tcArgument>
+		<tcArgument mnemonic="NRBIN">1</tcArgument>
+		<tcArgument mnemonic="NROW">511</tcArgument>
+		<tcArgument mnemonic="NCSKIP">0</tcArgument>
+		<tcArgument mnemonic="NCBIN">1</tcArgument>
+		<tcArgument mnemonic="NCOL">2047</tcArgument>
+		<tcArgument mnemonic="NCBINFPGA">0</tcArgument>
+		<tcArgument mnemonic="SIGMODE">1</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCD">
+	<relativeTime>6</relativeTime>
+	<comment>CCD settings</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">4</tcArgument>
+		<tcArgument mnemonic="PWR">1</tcArgument>
+		<tcArgument mnemonic="WDW">7</tcArgument>
+		<tcArgument mnemonic="JPEGQ">100</tcArgument>
+		<tcArgument mnemonic="SYNC">0</tcArgument>
+		<tcArgument mnemonic="TEXPIMS">62800</tcArgument>
+		<tcArgument mnemonic="TEXPMS">15000</tcArgument>
+		<tcArgument mnemonic="GAIN">0</tcArgument>
+		<tcArgument mnemonic="NFLUSH">1023</tcArgument>
+		<tcArgument mnemonic="NRSKIP">0</tcArgument>
+		<tcArgument mnemonic="NRBIN">1</tcArgument>
+		<tcArgument mnemonic="NROW">511</tcArgument>
+		<tcArgument mnemonic="NCSKIP">0</tcArgument>
+		<tcArgument mnemonic="NCBIN">1</tcArgument>
+		<tcArgument mnemonic="NCOL">2047</tcArgument>
+		<tcArgument mnemonic="NCBINFPGA">0</tcArgument>
+		<tcArgument mnemonic="SIGMODE">1</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCD">
+	<relativeTime>8</relativeTime>
+	<comment>CCD settings</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">8</tcArgument>
+		<tcArgument mnemonic="PWR">1</tcArgument>
+		<tcArgument mnemonic="WDW">7</tcArgument>
+		<tcArgument mnemonic="JPEGQ">100</tcArgument>
+		<tcArgument mnemonic="SYNC">0</tcArgument>
+		<tcArgument mnemonic="TEXPIMS">62800</tcArgument>
+		<tcArgument mnemonic="TEXPMS">15000</tcArgument>
+		<tcArgument mnemonic="GAIN">0</tcArgument>
+		<tcArgument mnemonic="NFLUSH">1023</tcArgument>
+		<tcArgument mnemonic="NRSKIP">0</tcArgument>
+		<tcArgument mnemonic="NRBIN">1</tcArgument>
+		<tcArgument mnemonic="NROW">511</tcArgument>
+		<tcArgument mnemonic="NCSKIP">0</tcArgument>
+		<tcArgument mnemonic="NCBIN">1</tcArgument>
+		<tcArgument mnemonic="NCOL">2047</tcArgument>
+		<tcArgument mnemonic="NCBINFPGA">0</tcArgument>
+		<tcArgument mnemonic="SIGMODE">1</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCD">
+	<relativeTime>10</relativeTime>
+	<comment>CCD settings</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">16</tcArgument>
+		<tcArgument mnemonic="PWR">1</tcArgument>
+		<tcArgument mnemonic="WDW">7</tcArgument>
+		<tcArgument mnemonic="JPEGQ">100</tcArgument>
+		<tcArgument mnemonic="SYNC">0</tcArgument>
+		<tcArgument mnemonic="TEXPIMS">62800</tcArgument>
+		<tcArgument mnemonic="TEXPMS">15000</tcArgument>
+		<tcArgument mnemonic="GAIN">0</tcArgument>
+		<tcArgument mnemonic="NFLUSH">1023</tcArgument>
+		<tcArgument mnemonic="NRSKIP">0</tcArgument>
+		<tcArgument mnemonic="NRBIN">1</tcArgument>
+		<tcArgument mnemonic="NROW">511</tcArgument>
+		<tcArgument mnemonic="NCSKIP">0</tcArgument>
+		<tcArgument mnemonic="NCBIN">1</tcArgument>
+		<tcArgument mnemonic="NCOL">2047</tcArgument>
+		<tcArgument mnemonic="NCBINFPGA">0</tcArgument>
+		<tcArgument mnemonic="SIGMODE">1</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCD">
+	<relativeTime>12</relativeTime>
+	<comment>CCD settings</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">32</tcArgument>
+		<tcArgument mnemonic="PWR">1</tcArgument>
+		<tcArgument mnemonic="WDW">7</tcArgument>
+		<tcArgument mnemonic="JPEGQ">100</tcArgument>
+		<tcArgument mnemonic="SYNC">0</tcArgument>
+		<tcArgument mnemonic="TEXPIMS">62800</tcArgument>
+		<tcArgument mnemonic="TEXPMS">15000</tcArgument>
+		<tcArgument mnemonic="GAIN">0</tcArgument>
+		<tcArgument mnemonic="NFLUSH">1023</tcArgument>
+		<tcArgument mnemonic="NRSKIP">0</tcArgument>
+		<tcArgument mnemonic="NRBIN">1</tcArgument>
+		<tcArgument mnemonic="NROW">511</tcArgument>
+		<tcArgument mnemonic="NCSKIP">0</tcArgument>
+		<tcArgument mnemonic="NCBIN">1</tcArgument>
+		<tcArgument mnemonic="NCOL">2047</tcArgument>
+		<tcArgument mnemonic="NCBINFPGA">0</tcArgument>
+		<tcArgument mnemonic="SIGMODE">1</tcArgument>
+	</tcArguments>
+</command>
+    
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>15</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">1</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>45</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">2</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>75</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">4</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>105</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">8</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>135</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">16</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>165</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">32</tcArgument>
+	</tcArguments>
+</command>
+
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>195</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">1</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>225</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">2</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>255</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">4</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>285</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">8</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>315</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">16</tcArgument>
+	</tcArguments>
+</command>
+
+<command mnemonic="TC_pafCCDSNAPSHOT">
+	<relativeTime>345</relativeTime>
+	<comment>Take snapshot</comment>
+	<tcArguments>
+		<tcArgument mnemonic="CCDSEL">32</tcArgument>
+	</tcArguments>
+</command>
