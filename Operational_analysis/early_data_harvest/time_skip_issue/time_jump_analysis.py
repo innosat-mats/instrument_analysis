@@ -13,7 +13,6 @@ measurements.
 from plotting.sort_images import sort_images_in_dirs, sort_images_plot
 from mats_l1_processing.read_in_functions import read_CCDitems,read_CCDdata
 import matplotlib.pyplot as plt
-
 from mats_l1_processing.L1_calibrate import L1_calibrate
 from mats_l1_processing.experimental_utils import plot_CCDimage
 from mats_l1_processing.instrument import Instrument
