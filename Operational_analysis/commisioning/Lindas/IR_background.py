@@ -14,7 +14,7 @@ directory='/Users/lindamegner/MATS/retrieval/FlightData/commissioning/RacOut_IR3
 #directory=main_path+'FlightData/221122_commisioning_day1/RacOut_darkcurrent_265_266/'
 calibration_file=main_path+'MATS-L1-processing/scripts/calibration_data_linda.toml'
 instrument_analysis_path=main_path+'instrument_analysis/'
-run_from_path=instrument_analysis_path+'Operational_analysis/commisioning/nadirtest/'
+run_from_path=instrument_analysis_path+'Operational_analysis/commisioning/Lindas/'
 image_path=run_from_path+'images/'
 _,df = read_CCDdata(directory)
 #%%

@@ -15,8 +15,21 @@ instrument_analysis_path=main_path+'git/instrument_analysis/'
 run_from_path=instrument_analysis_path+'Operational_analysis/commisioning/Lindas/'
 image_path=run_from_path+'images/'
 _,df = read_CCDdata(directory)
-df = df[df.TEXPMS == 32000]
+#df = df[df.TEXPMS == 32000]
+
+import datetime as DT
+from selection_tools import select_on_time as seltime
+_,df = read_CCDdata(rac_directory)
+date1 = DT.datetime(2022,11,24,11,00,00)
+date2 = DT.datetime(2022,11,24,12,00,00)
+
+df = seltime(date1,date2,df) #filtered dataframe between 11 and 12 UTC the 24th november 2022
+CCDitems = read_CCDitems(directory,items=df.to_dict('records')) #load only selected images
+
+
+df = df[df.CCDSEL == 2]
 CCDitems = read_CCDitems(directory,items=df.to_dict('records'))
+
 
 #%%
 instrument = Instrument(calibration_file)
@@ -39,13 +52,13 @@ if calibrated:
 else:
     image_specification='IMAGE'
 
-clim=[]
+clim=[-5, 100]
 meanvalue=[]
 exptime=[]
 for CCDitem in CCDitems:
     fig , ax= plt.subplots(1, 1, figsize=(8, 2))
     image=CCDitem[image_specification]
-    sp=plot_CCDimage(image, fig, ax, title=CCDitem['channel']+' '+str(CCDitem['TEXPMS']/1000),clim=clim)
+    sp=plot_CCDimage(image, fig, ax, title=CCDitem['channel']+' '+str(CCDitem['TEXPMS']/1000), clim=clim)
     meanvalue.append(image.mean())
     exptime.append(CCDitem['TEXPMS']/1000)
 
@@ -63,6 +76,6 @@ plt.show()
 
 
 
-plt.savefig(image_path+CCDitem['id']+'.png', dpi=1600)
+#plt.savefig(image_path+CCDitem['id']+'.png', dpi=1600)
 
 # %%

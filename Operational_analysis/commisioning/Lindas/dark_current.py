@@ -12,7 +12,7 @@ main_path='/Users/lindamegner/MATS/retrieval/'
 directory=main_path+'FlightData/221122_commisioning_day1/RacOut_darkcurrent_265_266/'
 calibration_file=main_path+'git/MATS-L1-processing/scripts/calibration_data_linda.toml'
 instrument_analysis_path=main_path+'git/instrument_analysis/'
-run_from_path=instrument_analysis_path+'Operational_analysis/commisioning/DarkCurrentAnalysis/'
+run_from_path=instrument_analysis_path+'Operational_analysis/commisioning/Lindas/'
 image_path=run_from_path+'images/'
 _,df = read_CCDdata(directory)
 #df = df[df.TEXPMS == 32000]
