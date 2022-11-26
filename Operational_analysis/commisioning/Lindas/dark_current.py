@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from mats_l1_processing.instrument import Instrument
 from mats_l1_processing.L1_calibrate import L1_calibrate
-from mats_l1_processing.experimental_utils import plot_CCDimage
+from mats_l1_processing.experimental_utils import plot_CCDimage, calibrate_CCDitems
 
 # %%
 main_path='/Users/lindamegner/MATS/retrieval/'
@@ -20,22 +20,10 @@ df = df[df.CCDSEL == 2]
 CCDitems = read_CCDitems(directory,items=df.to_dict('records'))
 
 #%%
-instrument = Instrument(calibration_file)
 
-for CCDitem in CCDitems:
-    (
-        image_lsb,
-        image_bias_sub,
-        image_desmeared,
-        image_dark_sub,
-        image_calib_nonflipped,
-        image_calibrated,
-        errors
-    ) = L1_calibrate(CCDitem, instrument)
-#%%
-
-calibrated=True
-if calibrated:
+calibrate=True
+if calibrate:
+    calibrate_CCDitems(CCDitems, Instrument(calibration_file))
     image_specification='image_calibrated'
 else:
     image_specification='IMAGE'
@@ -46,7 +34,7 @@ exptime=[]
 for CCDitem in CCDitems:
     fig , ax= plt.subplots(1, 1, figsize=(8, 2))
     image=CCDitem[image_specification]
-    sp=plot_CCDimage(image, fig, ax, title=CCDitem['channel']+' '+str(CCDitem['TEXPMS']/1000), clim=clim)
+    sp=plot_CCDimage(image, fig, ax, title=CCDitem['channel']+' '+str(CCDitem['TEXPMS']/1000))
     meanvalue.append(image.mean())
     exptime.append(CCDitem['TEXPMS']/1000)
 

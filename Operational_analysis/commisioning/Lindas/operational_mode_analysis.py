@@ -5,52 +5,48 @@ from matplotlib import pyplot as plt
 import numpy as np
 from mats_l1_processing.instrument import Instrument
 from mats_l1_processing.L1_calibrate import L1_calibrate
-from mats_l1_processing.experimental_utils import plot_CCDimage
+from mats_l1_processing.experimental_utils import plot_CCDimage, calibrate_CCDitems
+import datetime as DT
+from selection_tools.itemselect import select_on_time as seltime
+from rawdata.time_tools import add_datetime as add_datetime
 
 # %%
-main_path='/Users/lindamegner/MATS/retrieval/'
-directory=main_path+'FlightData/221122_commisioning_day1/RacOut_darkcurrent_265_266/'
-calibration_file=main_path+'git/MATS-L1-processing/scripts/calibration_data_linda.toml'
-instrument_analysis_path=main_path+'git/instrument_analysis/'
-run_from_path=instrument_analysis_path+'Operational_analysis/commisioning/Lindas/'
+
+instrument_analysis='/Users/lindamegner/MATS/retrieval/git/instrument_analysis/'
+RacOut='/Users/lindamegner/MATS/retrieval/FlightData/commissioning/RacFiles_out/'
+calibration_file='/Users/lindamegner/MATS/retrieval/git/MATS-L1-processing/scripts/calibration_data_linda.toml'
+
+run_from_path=instrument_analysis+'Operational_analysis/commisioning/Lindas/'
 image_path=run_from_path+'images/'
-_,df = read_CCDdata(directory)
-#df = df[df.TEXPMS == 32000]
+# %%
+_,df = read_CCDdata(RacOut)
+# %%
+date1 = DT.datetime(2022,11,23,12,00,00)
+date2 = DT.datetime(2022,11,25,12,00,00)
 
-import datetime as DT
-from selection_tools import select_on_time as seltime
-_,df = read_CCDdata(rac_directory)
-date1 = DT.datetime(2022,11,24,11,00,00)
-date2 = DT.datetime(2022,11,24,12,00,00)
+dfdatetime=add_datetime(df)
+df = seltime(date1,date2,dfdatetime) #filtered dataframe between 11 and 12 UTC the 24th november 2022
 
-df = seltime(date1,date2,df) #filtered dataframe between 11 and 12 UTC the 24th november 2022
-CCDitems = read_CCDitems(directory,items=df.to_dict('records')) #load only selected images
+#%%
 
+df = df[(df.CCDSEL == 2) & (df.NCOL < 500) ]
+df=df.iloc[0::10, :]
 
-df = df[df.CCDSEL == 2]
-CCDitems = read_CCDitems(directory,items=df.to_dict('records'))
+#%%
+CCDitems = read_CCDitems(RacOut,items=df.to_dict('records'))
 
 
 #%%
-instrument = Instrument(calibration_file)
-
-for CCDitem in CCDitems:
-    (
-        image_lsb,
-        image_bias_sub,
-        image_desmeared,
-        image_dark_sub,
-        image_calib_nonflipped,
-        image_calibrated,
-        errors
-    ) = L1_calibrate(CCDitem, instrument)
-#%%
-
-calibrated=True
-if calibrated:
+calibrate=True
+if calibrate:
+    calibrate_CCDitems(CCDitems, Instrument(calibration_file))
     image_specification='image_calibrated'
 else:
     image_specification='IMAGE'
+
+
+
+#%%
 
 clim=[-5, 100]
 meanvalue=[]
@@ -58,13 +54,11 @@ exptime=[]
 for CCDitem in CCDitems:
     fig , ax= plt.subplots(1, 1, figsize=(8, 2))
     image=CCDitem[image_specification]
-    sp=plot_CCDimage(image, fig, ax, title=CCDitem['channel']+' '+str(CCDitem['TEXPMS']/1000), clim=clim)
+    sp=plot_CCDimage(image, fig, ax, title=CCDitem['channel']+' '+str(CCDitem['TEXPMS']/1000))
     meanvalue.append(image.mean())
     exptime.append(CCDitem['TEXPMS']/1000)
 
 
-    if CCDitem['TEXPMS']==32000:
-        fig.savefig(image_path+CCDitem['id']+'_32s.png', dpi=1600)
 #%%
     
 plt.plot(exptime,meanvalue,'*')

@@ -23,46 +23,6 @@ import shutil
 
 
 
-def calibrate_CCDitems(CCDitems,instrument, plot=False):
-    """
-    Calibrate all CCDitems in the list
-
-    Parameters
-    ----------
-    CCDitems : List of dictionaries
-        Contains images and housing data
-    instrument: instrument object, see mats_l1_processing.instrument
-    plot : logical, optional
-        If true the calibrations steps are plotted. The default is False.
-
-    Returns
-    -------
-    Does not return anything but CCDitems will now contain calibrated images
-    """
-    for CCDitem in CCDitems:
-        (
-            image_lsb,
-            image_bias_sub,
-            image_desmeared,
-            image_dark_sub,
-            image_calib_nonflipped,
-            image_calibrated,
-            errors
-        ) = L1_calibrate(CCDitem, instrument)
-
-        if plot:
-            fig, ax = plt.subplots(5, 1)
-            plot_CCDimage(image_lsb, fig, ax[0], "Original LSB")
-            plot_CCDimage(image_bias_sub, fig, ax[1], "Bias subtracted")
-            plot_CCDimage(image_desmeared, fig, ax[2], " Desmeared LSB")
-            plot_CCDimage(
-                image_dark_sub, fig, ax[3], " Dark current subtracted LSB"
-            )
-            plot_CCDimage(
-                image_calib_nonflipped, fig, ax[4], " Flat field compensated LSB"
-            )
-            fig.suptitle(CCDitem["channel"])
-    
 
 
 
@@ -77,27 +37,26 @@ def calibrate_CCDitems(CCDitems,instrument, plot=False):
 #directory='/Users/lindamegner/MATS/retrieval/Calibration/FinalFinalSept2021/LaserAlignmentTest_RacFiles0909to0910Duplicated/RacFiles_out/'
 
 #%%
-directory='/Users/lindamegner/MATS/retrieval/FlightData/221109_first_images/RacFiles_out_72/'
-
+directory='/Users/lindamegner/MATS/retrieval/FlightData/221109_first_images/RacFiles_out_70/'
 calibration_file='/Users/lindamegner/MATS/retrieval/git/MATS-L1-processing/scripts/calibration_data_linda.toml'
+
+
 channels=['IR1','IR2','IR3','IR4','UV1','UV2']
-
-instrument = Instrument(calibration_file)
-
-calibrate=True  
 
 CCDitems = read_CCDitems(directory)  # read in data
 print('Total number of CCDitems: ',len(CCDitems))
 
+
 #%%
-if calibrate:
-    calibrate_CCDitems(CCDitems, instrument) #calibrate
+calibrate=True 
+if calibrate:  
+    calibrate_CCDitems(CCDitems, Instrument(calibration_file))
 
 
 
 plotdir=directory[:-16]+'plot_dir'+directory[-4:-1]+'_cal/'
 
-#shutil.rmtree(plotdir)
+shutil.rmtree(plotdir)
 
 os.mkdir(plotdir)
 os.mkdir(plotdir+'/single_images')
