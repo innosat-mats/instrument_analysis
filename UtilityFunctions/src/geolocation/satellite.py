@@ -133,11 +133,14 @@ def radec2xyz(ra,dec, deg=True):
         
 def get_tle_MATS(d):
     ts=sfapi.load.timescale()
-    if d<DT.datetime(2022,11,26):
+    if utc_date.tzinfo == None:
+        utc_date = utc_date.replace(tzinfo=DT.timezone.utc)
+
+    if d<DT.datetime(2022,11,26,tzinfo=DT.timezone.utc):
         tle=['1 99988U 22123A   22327.21800926  .00000000  00000-0  22763-3 0   159',
             '2 99988  97.6525 329.4315 0012466 240.1585 268.5406 14.92722274002766']
     else:
-        tle=['1 99988U 22123A   22332.47506944  .00000000  00000-0  24758-3 0   163'
+        tle=['1 99988U 22123A   22332.47506944  .00000000  00000-0  24758-3 0   163',
             '2 99988  97.6531 334.5422 0012605 221.2886  80.4135 14.92738746003557']
 
     
