@@ -1,18 +1,114 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 23 13:53:36 2022
+Created on Fri Dec 2 9:38:36 2022
 
 @author: lindamegner
 
-
-This is more or less a duplicate of read_and_calibrate_all_files_in_directory but it is meant to be used as a script.
+File for differet plotting functions to be used for MATS commisioning data analysis
 """
 
 
 import matplotlib.pyplot as plt
 from mats_l1_processing.experimental_utils import plot_CCDimage
 
+
+
+def collapsandplot(imagecub,collapsdim, ax, signallabel='', title=''):
+    """    
+    Parameters
+    ----------
+    imagecub : 3d numpy array made by several CCDimages, created by  create_imagecube(CCDitems, calibrated=False)
+    calibrated : BOOLEAN 
+
+    Returns
+    -------
+    3d ndarray with all images and time as the last dimension
+
+    """
+
+    img_hmean=imagecube.mean(collapsdim)
+    img_mean=img_hmean.mean(0)
+    myindex1=np.arange(0, img_mean.shape[0])
+    
+
+    if collapsdim==2:
+        myindex=myindex1*CCDitem['NRBIN']#/7.6+54
+        ax.plot(img_mean,myindex, label='mean')
+
+        img_std=img_hmean.std(0)
+        ax.plot(img_mean+img_std,myindex, '--', label='mean+1std')
+        ax.plot(img_mean-img_std,myindex, '--', label='mean+1std')
+
+
+        ax.plot(img_hmean.max(0),myindex, '.', label='max')
+        ax.plot(img_hmean.min(0),myindex, '.', label='min')
+
+        ax.set_xlabel(signallabel)
+        ax.set_ylabel('bin nr')
+        ax.set_title(title)
+        ax.legend()
+        plt.tight_layout()
+    elif collapsdim==1:
+        myindex=myindex1*CCDitem['NCBIN CCDColumns']#/7.6-125
+        ax.plot(myindex, img_mean, label='mean')
+
+        img_std=img_hmean.std(0)
+        ax.plot(myindex,img_mean+img_std, '--', label='mean+1std' )
+        ax.plot(myindex,img_mean-img_std, '--', label='mean-1std')
+
+
+        ax.plot(myindex,img_hmean.max(0), '.', label='max')
+        ax.plot(myindex,img_hmean.min(0), '.', label='min')
+
+        ax.set_ylabel(signallabel)
+        ax.set_xlabel('bin nr')
+        ax.set_title(title)
+        
+        ax.legend()
+        plt.tight_layout()
+
+    else:
+        raise Warning('collapsdim must be 1 or 2')
+
+    return
+
+def create_imagecube(CCDitems, calibrated=False):
+    """    
+    Parameters
+    ----------
+    CCDitems : LIST of CCDitems
+    calibrated : BOOLEAN 
+
+    Returns
+    -------
+    3d ndarray with all images and time as the last dimension
+
+    """
+    imagelist=[]
+    for CCDitem in CCDitems:
+        image=CCDitem[image_specification]
+        imagelist.append(image)
+
+    imagecube=np.array(imagelist)
+
+    return imagecube
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##########
     
 def select_CCDitems(CCDitems, key, value): 
     """
@@ -44,178 +140,3 @@ def select_CCDitems_using_list(CCDitems, key, valuelist):
     
     return CCDitems
 
-
-
-def select_CCDitems_using_keyvaluedict(CCDitems, key_value_dict):
-    """
-    
-    Parameters
-    ----------
-    CCDitems : LIST of CCDitems
-    key_value_dict : DICTIONARY specifying the keys to sort on and their values
-
-    Returns
-    -------
-    LIST if CCDitems that pass all selection criteria in key_value_list
-
-    """
-    CCDitems_select=CCDitems
-    for key, value in key_value_dict.items():
-        CCDitems_select=select_CCDitems(CCDitems_select,key,value)
-    
-    return CCDitems_select
-
-
-
-def sort_images_in_dirs(CCDitems, key_value_dict, clim=999, path='.', whattoplot="IMAGE"):
-    """
-    Takes a CCDitems list, plots the images and sorts the plots in directories according to the key_value_dict
-    
-
-    Parameters
-    ----------
-    CCDitems : LIST of CCDitems
-    key_value_dict : DICTIONARY specifying the keys to sort on and their values
-    clim : optional
-        DESCRIPTION. The default is "999".
-    path : STRING, optional
-        DESCRIPTION. The default is ".".
-    whattoplot : STRING, optional
-        DESCRIPTION. The default is "IMAGE".
-
-    Returns
-    -------
-    None.
-
-    """
-    import os
-    
-    for key, value in key_value_dict.items():
-        keyval=str(key)+'_'+str(value)
-        dirname=path+'/'+keyval
-        CCDitems_select=select_CCDitems(CCDitems,key,value)
-        os.mkdir(dirname)
-        plot_CCDitems(CCDitems_select, path=dirname, title=keyval, whattoplot=whattoplot)
-        
- 
-        
- 
-def sort_images_plot(CCDitems, key_value_dict, clim=999, path='.', whattoplot="IMAGE"):
-    """
-    Takes a CCDitems list, and plots selected images according to the key_value_dict
-    
-
-    Parameters
-    ----------
-    CCDitems : LIST of CCDitems
-    key_value_dict : DICTIONARY specifying the keys to sort on and their values
-    clim : optional
-        DESCRIPTION. The default is "999".
-    path : STRING, optional
-        DESCRIPTION. The default is ".".
-    whattoplot : STRING, optional
-        DESCRIPTION. The default is "IMAGE".    
-
-
-    Returns
-    -------
-    None.
-
-    """
-    
-    keyval=''
-    for key, value in key_value_dict.items():
-
-        keyval=keyval+'_'+str(key)+'_'+str(value)
-
-        #dirname=path+'/'+keyval
-        CCDitems=select_CCDitems(CCDitems,key,value)
-        #os.mkdir(dirname)
-        #plot_CCDitems(CCDitems_select, path=dirname, title=keyval)
-    if len(CCDitems)>10:
-        raise Exception('Too many imgaes to plot in one plot - make a more narrpw selection')
-    nr_of_plots=len(CCDitems)
-    if len(CCDitems)==1: nr_of_plots=1
-    fig, ax= plt.subplots(nr_of_plots,1)
-    for ind, CCDitem in enumerate(CCDitems):
-
-        sp=plot_CCDimage(CCDitem[whattoplot], fig, ax[ind], CCDitem['id']+'_'+keyval,clim)
-            #fig.suptitle(channel)
-            #sp.set(visible='False')        
-    fig.savefig(path+'/image_'+CCDitem['id']+'.jpg')
-            #plt.close(fig)
-        
-        
-def create_plot_directory_tree(CCDitems, key_value_dict, clim=999, path='.'):
-    """
-    NOT FUNCTIONING YET - this function may not be needed
-    
-    Takes a CCDitems list, plots the images and sorts the plots in directories according to the key_value_dict
-    
-    
-
-    Parameters
-    ----------
-    CCDitems : LIST of CCDitems
-    key_value_dict : DICTIONARY specifying the keys to sort on and their values
-    path : STRING, optional
-        DESCRIPTION. The default is ".".
-
-
-    Returns
-    -------
-    None.
-
-    """
-    import os
-    
-    dirname=path
-    for key, value in key_value_dict.items():
-
-        keyval=str(key)+'_'+str(value)
-    
-        dirname=dirname+'/'+keyval
-        os.mkdir(dirname)
-        CCDitems=select_CCDitems(CCDitems,key,value)
-        
-        
-        plot_CCDitems(CCDitems, path=dirname, title=keyval) 
-        
-        
-        
-
-def plot_CCDitems(CCDitems, title="", clim=999, aspect="auto", path=".", whattoplot="IMAGE"):
-    """
-    Plots all CCDitems in the directory given as input
-
-    Parameters
-    ----------
-    CCDitems : LIST OF DICTS
-        DESCRIPTION.
-    title : TYPE, optional
-        DESCRIPTION. The default is "".
-    clim : TYPE, optional
-        DESCRIPTION. The default is 999.
-    aspect : TYPE, optional
-        DESCRIPTION. The default is "auto".
-    path : STRING, optional
-        DESCRIPTION. The default is ".".
-    whattoplot : STRING, optional
-        DESCRIPTION. The default is "IMAGE".
-
-    Returns
-    -------
-    None.
-
-    """
-
-    for CCDitem in CCDitems:
-        fig = plt.figure()
-        ax = fig.gca()
-        sp=plot_CCDimage(CCDitem[whattoplot], fig, ax, CCDitem['id']+'_'+title,clim,aspect)
-        #fig.suptitle(channel)
-        #sp.set(visible='False')        
-        fig.savefig(path+'/image_'+CCDitem['id']+'.jpg')
-        #plt.close(fig)
-
-        
