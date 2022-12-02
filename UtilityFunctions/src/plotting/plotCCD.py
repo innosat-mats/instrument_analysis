@@ -1,14 +1,31 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 import os
 import cartopy.crs as ccrs
+import pandas as pd
 from geolocation import satellite as satellite
 from cartopy.feature.nightshade import Nightshade
+
+def check_type(CCDitems):
+    """Check format of CCDitems
+    Exit program if type is not DataFrame
+
+    Parameters
+    ----------
+    CCDitems : any
+        CCDitems
+    """
+
+    if isinstance(CCDitems, pd.core.frame.DataFrame) is False:
+        sys.exit("CCDitems need to be converted to DataFrame!")
+
+    return
 
 
 def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                 ranges=[0, 1000], format='png'):
-    """Generates CCD plots with basic orbit parameters included.
+    """Generates plots from CCDitems with basic orbit parameters included.
     Images will be sorted in folders based on CCDSEL in directory specified.
 
     Parameters
@@ -28,6 +45,8 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
     format : str, optional
         format for files, by default 'png'
     """
+
+    check_type(CCDitems)
 
     fig = plt.figure(figsize=(12, 3))
 
@@ -89,7 +108,7 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
 def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                ranges=[0, 1000], format='png'):
     """
-       Generates figure with CCD image, histogram and map.
+       Generates plots from CCD items: image, histogram and map.
        If simple_plot is True, only CCD image is plotted.
        Figures will be saved in subfolders of outdir by CCDSEL.
 
@@ -110,6 +129,8 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
     format : str
         file format for output img
     """
+
+    check_type(CCDitems)
 
     for CCDno in range(0, 8):
 
