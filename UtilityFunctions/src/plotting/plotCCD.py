@@ -6,24 +6,6 @@ from geolocation import satellite as satellite
 from cartopy.feature.nightshade import Nightshade
 
 
-def save_figure(outdir, outname, format='png'):
-    """Saves figure at outdir
-
-    Parameters
-    ----------
-    outdir : str
-        directory
-    outname : str
-        filename
-    format : str, optional
-        image format, by default 'png'
-    """
-
-    plt.savefig(f'{outdir}/{outname}.{format}', format=format)
-
-    return
-
-
 def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                 ranges=[0, 1000], format='png'):
     """Generates CCD plots with basic orbit parameters included.
