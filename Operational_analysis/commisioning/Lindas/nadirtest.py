@@ -9,13 +9,14 @@ from mats_l1_processing.experimental_utils import plot_CCDimage
 
 # %%
 main_path='/Users/lindamegner/MATS/retrieval/'
-directory=main_path+'FlightData/221122_commisioning_day1/RacOut_darkcurrent_265_266/'
+ 
+directory=main_path+'FlightData/commissioning/RacFiles_out/'
 calibration_file=main_path+'git/MATS-L1-processing/scripts/calibration_data_linda.toml'
 instrument_analysis_path=main_path+'git/instrument_analysis/'
 run_from_path=instrument_analysis_path+'Operational_analysis/commisioning/Lindas/'
 image_path=run_from_path+'images/'
 _,df = read_CCDdata(directory)
-df = df[df.TEXPMS == 32000]
+df = df[df.CCDSEL == 7]
 CCDitems = read_CCDitems(directory,items=df.to_dict('records'))
 
 #%%
@@ -33,19 +34,19 @@ for CCDitem in CCDitems:
     ) = L1_calibrate(CCDitem, instrument)
 #%%
 
-calibrated=True
+calibrated=False
 if calibrated:
     image_specification='image_calibrated'
 else:
     image_specification='IMAGE'
 
-clim=[]
+
 meanvalue=[]
 exptime=[]
 for CCDitem in CCDitems:
     fig , ax= plt.subplots(1, 1, figsize=(8, 2))
     image=CCDitem[image_specification]
-    sp=plot_CCDimage(image, fig, ax, title=CCDitem['channel']+' '+str(CCDitem['TEXPMS']/1000),clim=clim)
+    sp=plot_CCDimage(image, fig, ax, title=CCDitem['channel']+' '+str(CCDitem['TEXPMS']/1000))
     meanvalue.append(image.mean())
     exptime.append(CCDitem['TEXPMS']/1000)
 
