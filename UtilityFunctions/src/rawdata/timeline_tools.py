@@ -15,8 +15,8 @@ def load_schedule(filename):
     """
         
     df = pd.read_csv(filename)
-    df['start_date'] = pd.to_datetime(df['start_date'],tzinfo=DT.timezone.utc)
-    df['end_date'] = pd.to_datetime(df['end_date'],tzinfo=DT.timezone.utc)
+    df['start_date'] = pd.to_datetime(df['start_date'])
+    df['end_date'] = pd.to_datetime(df['end_date'])
 
     return df
 
@@ -31,5 +31,8 @@ def plot_schedule(df,column='name'):
 
     """
     for x1, x2, y in zip(df["start_date"], df["end_date"], df[column]):
-        plt.plot([x1, x2], [y, y])
+        plt.plot([x1, x2], [y, y],linewidth=5)
+    plt.title('Payload schedule')
+
+    plt.show()
     
