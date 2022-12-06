@@ -11,15 +11,16 @@ import selection_tools.itemselect as itemselect
 import datetime as DT
 
 # %%
-directory='/home/mats/MATS/Data/commissioning/'
-calibration_file='/home/mats/MATS/instrument_analysis/Operational_analysis/commisioning/calibration_data_linda.toml'
+directory='/home/olemar/Projects/Universitetet/MATS/instrument_analysis/Operational_analysis/commisioning/data/star/'
+calibration_file='/home/olemar/Projects/Universitetet/MATS/instrument_analysis/Operational_analysis/commisioning/calibration_data_linda.toml'
 
 _,df = read_CCDdata(directory)
+
+#%%
 df = time_tools.add_datetime(df) #convert to datetime
-start_date = DT.datetime(2022,11,29,18,00,00)
-end_date = DT.datetime(2022,11,29,18,15,00)
+start_date = DT.datetime(2022,12,5,18,00,00)
+end_date = DT.datetime(2022,12,5,20,00,00)
 df = itemselect.select_on_time(start_date,end_date,df)
-df = df[df.CCDSEL == 6]
 
 
 

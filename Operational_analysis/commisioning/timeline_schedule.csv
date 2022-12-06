@@ -1,0 +1,64 @@
+start_date,end_date,id,name,version,standard_altitude,yaw_correction,pointing_altitudes,xml_file,description_short,description_long
+2022-11-22 08:15:00,2022-11-22 09:25:00,3040,STAR,1,92500,False,[92500],STP-MTS-3040_22112222112001STAR.xml,Star freeze,"Start with limb pointing at 90 km and follow star for 4 minutes. Take images with IR3 with 5s, 15s, 30s, 60s, 90s integration times"
+2022-11-22 09:30:00,2022-11-22 12:45:00,3050,LMBF,1,92500,False,"[230000, 230000]",STP-MTS-3050_22112222112001LMBF.xml,Limb functional,"Point at 230 km, take fullframe images with all channels with 1,2, 4s and 8s integration time once during day and once during night
+Point at 230 km, take fullframe images with all channels with 16 and 32s integration time once during day and once during night "
+2022-11-22 12:45:00,2022-11-22 14:20:00,2020,SNAPT4,1,92500,False,[],SKS-MTS-2020-22112222112001SNAPT4.xml,Star ECI pointing,"Start with limb pointing at 90 km and follow star for 4 minutes using OHB ECI staring manouver. Take images with IR3 with 5s, 15s, 30s, 60s integration times"
+2022-11-22 14:20:00,2022-11-22 17:35:00,3051,LMBF,1,92500,False,"[70000, 70000]",STP-MTS-3051_22112222112001LMBF.xml,Limb functional,"Point at 70 km, take fullframe images with all channels with 1,2 4s and 8s integration time once during day and once during night
+Point at 70 km, take fullframe images with all channels with 16 and 32s integration time once during day and once during night
+"
+2022-11-22 17:45:00,2022-11-23 07:43:20,3101,MODE5,1,92500,False,[],STP-MTS-3101_22112222112001MODE5.xml,Operational mode,"Binned calibration, WDW128, TEXPUV = 5000, TEXPIR = 5000, TEXPBG = 5000, TEXPHO = 1500"
+2022-11-23 08:10:00,2022-11-23 09:40:00,3060,NADF,1,92500,False,[92500],STP-MTS-3060_22112322112101NADF.xml,Nadir functional,"Take full frame images with 1,2 and 4s integration time at night with Nadir camera"
+2022-11-23 10:00:00,2022-11-23 14:45:00,3052,LMBF,2,92500,False,"[90000, 90000, 110000]",STP-MTS-3052_22112322112202LMBF.xml,Limb functional,"Point at 90 km, take fullframe images with all channels with 1,2, 4s and 8s integration time once during day and once during night
+Point at 90 km, take fullframe images with all channels with 16 and 32s integration time once during day and once during night
+Point at 110 km, take fullframe images with all channels with 1,2,4 and 8s integration time once during day and once during night
+"
+2022-11-23 14:50:00,2022-11-23 16:50:00,3040,STAR,3,92500,False,[92500],STP-MTS-3040_22112322112303STAR.xml,Star freeze,"Start with limb pointing at 90 km and follow star for 4 minutes. Take images with IR3 with 5s, 15s, 30s, 60s, 90s integration times"
+2022-11-23 16:10:00,2022-11-23 18:10:00,3053,LMBF,3,92500,False,[110000],STP-MTS-3053_22112322112303LMBF.xml,Limb functional,"Point at 110 km, take fullframe images with all channels with 16 and 32s integration time once during day and once during night"
+2022-11-23 18:00:00,2022-11-24 06:00:00,3102,MODE5,2,92500,False,[],STP-MTS-3102_22112322112302MODE5.xml,Operational mode,"Operational binning, WDW128, TEXPUV = 5000, TEXPIR = 5000, TEXPBG = 5000, TEXPHO = 3000"
+2022-11-24 09:30:00,2022-11-24 10:00:00,3060,NADF,2,92500,False,[92500],STP-MTS-3060_22112422112302NADF.xml,Nadir functional,Take full frame images during night using nadir camera
+2022-11-24 10:00:00,2022-11-24 13:30:00,3054,LMBF,2,92500,False,"[130000, 130000]",STP-MTS-3054_22112422112302LMBF.xml,Limb functional,"Point at 130 km, take images with all channels with 1,2, 4s and 8s integration time once during day and once during night 
+Point at 130 km, take images with all channels with 16 and 32s integration time once during day and once during night "
+2022-11-24 13:30:00,2022-11-24 17:00:00,3055,LMBF,2,92500,False,"[50000, 50000]",STP-MTS-3055_22112422112302LMBF.xml,Limb functional,"Point at 50 km, take images with all channels with 1,2, 4s and 8s integration time once during day and once during night 
+Point at 50 km, take images with all channels with 16 and 32s integration time once during day and once during night "
+2022-11-25 06:00:00,2022-11-25 18:00:00,2020,SNPALL,2,92500,False,[],SKS-2020-22112222112002SNPALL.xml,Star ECI pointing,"Start with limb pointing at 90 km and follow star for 4 minutes using OHB ECI staring manouver. Take images with IR3 with 5s, 15s, 30s, 60s integration times"
+2022-11-25 18:00:00,2022-11-28 18:00:00,3170,PHOTO,1,92500,False,[],STP-MTS-3170_22112522112501PHOTO.xml,Photometer only,Run only photometer TEXPHO=6000
+2022-11-28 10:00:00,2022-11-28 11:00:00,3180,SIMRAC,1,92500,False,[230000],STP-MTS-3180_22112822112501SIMRAC.xml,Simultaneous readout,Take simulatanious readout 2 and 2 channels of dark sky with 5 and 15 s integration time
+2022-11-28 11:30:00,2022-11-28 13:00:00,3181,SIMR2C,1,92500,False,[230000],STP-MTS-3181_22112822112501SIMR2C.xml,Simultaneous readout,Take simulatanious readout all channels with 5 and 15 s integration time
+2022-11-28 14:00:00,2022-11-28 16:59:58,3080,RAY60,1,60000,False,[],STP-MTS-3080_22112222112501RAY60.xml,Rayleigh stare,"Do images binned calibration looking at 60 km. Take WDW 7 images with binned calibration but 12 sec exposure intervall.
+"
+2022-11-28 17:00:00,2022-11-28 19:59:58,3080,RAY90,1,90000,False,[],STP-MTS-3080_22112222112501RAY90.xml,Rayleigh stare,"Do images binned calibration looking at 90 km. Take WDW 7 images with binned calibration but 12 sec exposure intervall.
+"
+2022-11-28 20:00:00,2022-11-28 22:59:58,3080,RAY120,1,120000,False,[],STP-MTS-3080_22112222112501RAY120.xml,Rayleigh stare,"Do images binned calibration looking at 120 km. Take WDW 7 images with binned calibration but 12 sec exposure intervall.
+"
+2022-11-29 08:30:00,2022-11-29 10:30:00,3040,STAR,4,92500,False,[92500],STP-MTS-3040_22112922112804STAR.xml,Star freeze,Take image with all channels staggered with 15s integration time
+2022-11-29 10:30:00,2022-11-29 12:30:00,3040,STAR,5,92500,False,[92500],STP-MTS-3040_22112922112805STAR.xml,Star freeze,Take image with all channels staggered with 15s integration time
+2022-11-29 12:00:00,2022-11-29 14:00:00,3042,STAR,1,92500,False,[92500],STP-MTS-3042_22112922112801STAR.xml,Star freeze (Simultaneous readout),Take image with all channels simultaniously with 15s integration time
+2022-11-29 13:00:00,2022-11-29 15:00:00,3040,STAR,6,92500,False,[92500],STP-MTS-3040_22112922112806STAR.xml,Star freeze,Take image with all channels staggered with 15s integration time
+2022-11-29 18:00:00,2022-11-29 23:59:58,3103,MODE1,3,92500,False,[],STP-MTS-3103_22112922112803MODE1.xml,Operational mode,"Mode 1. Operational binning, WDW128, TEXPUV = 5000, TEXPIR = 5000, TEXPBG = 1500, TEXPHO = 3000"
+2022-11-30 02:00:00,2022-11-30 04:00:00,3070,MOON,1,90000,False,[92500],STP-MTS-3070_22113022112901MOON.xml,Moon freeze,Take image of moon using freeze with all channels 2 and 15s integration time
+2022-11-30 04:00:00,2022-11-30 06:00:00,3070,MOON,2,90000,False,[90000],STP-MTS-3070_22113022112902MOON.xml,Moon freeze,Take image of moon using freeze with all channels 2 and 15s integration time
+2022-11-30 06:00:00,2022-11-30 07:00:00,3070,MOON,3,90000,False,[90000],STP-MTS-3070_22113022112903MOON.xml,Moon freeze,Take image of moon using freeze with all channels 2 and 15s integration time
+2022-11-30 07:30:00,2022-11-30 08:30:00,3070,MOON,4,90000,False,[90000],STP-MTS-3070_22113022112904MOON.xml,Moon freeze,Take image of moon using freeze with all channels 2 and 15s integration time
+2022-11-30 09:00:00,2022-11-30 10:00:00,3070,MOON,5,90000,False,[90000],STP-MTS-3070_22113022112905MOON.xml,Moon freeze,Take image of moon using freeze with all channels 2 and 15s integration time
+2022-11-30 11:00:00,2022-11-30 12:00:00,3070,MOON,6,90000,False,[90000],STP-MTS-3070_22113022112906MOON.xml,Moon freeze,Take image of moon using freeze with all channels 2 and 15s integration time
+2022-11-30 12:30:00,2022-11-30 13:30:00,3070,MOON,7,90000,False,[90000],STP-MTS-3070_22113022112907MOON.xml,Moon freeze,Take image of moon using freeze with all channels 2 and 15s integration time
+2022-11-30 13:30:00,2022-11-30 17:30:00,3062,DARK3,1,92500,False,"[90000, 90000]",STP-MTS-3062_22113022112901DARK3.xml,Dark image with yaw,Take full frame dark images yawing away from the sun. 10s integration time all channels (incl nadir)
+2022-11-30 18:00:00,2022-12-01 05:59:58,3103,MODE1,3,92500,True,[],STP-MTS-3103_22113022112803MODE1.xml,Operational mode 1,"Mode 1. Operational binning, WDW128, TEXPUV = 5000, TEXPIR = 5000, TEXPBG = 1500, TEXPHO = 3000"
+2022-12-01 11:00:00,2022-12-01 13:00:00,3110,NADLMB,1,92500,False,[],STP-MTS-3110_22120222113001NADLMB.xml,Limb in Nadir,"Failed attempt at limb in nadir, satellitte did not turn"
+2022-12-01 14:10:00,2022-12-01 15:10:00,3110,NADLMB,1,92500,False,[],STP-MTS-3110_22120222113001NADLMB_2.xml,Limb in Nadir,"Failed attempt at limb in nadir, satellitte did not turn"
+2022-12-01 15:55:00,2022-12-01 16:25:00,3110,NADLMB,1,92500,False,[],STP-MTS-3110_22120222113001NADLMB_3.xml,Limb in Nadir,Sucessfully turned satellite to point in nadir. Full frame readouts. 
+2022-12-01 18:00:00,2022-12-01 23:59:58,3103,MODE1,4,92500,False,[],STP-MTS-3103_22120122113004MODE1.xml,Operational mode,"Mode 1. Operational binning, WDW128, TEXPUV = 5000, TEXPIR = 5000, TEXPBG = 1500, TEXPHO = 3000"
+2022-12-02 04:00:00,2022-12-02 05:00:00,3120,CROP,1,92500,False,[],STP-MTS-3120_22120222113001CROP.xml,Crop test,Full frame readout with full and half of image cropped in all channels
+2022-12-02 11:00:00,2022-12-02 14:29:58,3130,POL,1,92500,False,[],STP-MTS-3130_22120122113002POL.xml,Polarisation measurements,"Polarsisation measurements angling the satellite +-45 degree, ran in an intermediary bining mode"
+2022-12-02 20:00:00,2022-12-02 21:29:58,3160,ODIN1,1,90000,False,[],STP-MTS-3160_22120222120101ODIN1.xml,Odin co-aligned,Binned calibration mode for instrument
+2022-12-02 23:00:00,2022-12-03 00:29:58,3161,ODIN2,1,90000,False,[],STP-MTS-3161_22120222120101ODIN2.xml,Odin co-aligned,"Binned calibration mode for instrument, but in this measurement the correct yaw was not applied. "
+2022-12-03 12:00:00,2022-12-03 23:59:58,3104,MODE5,1,92500,False,[],STP-MTS-3104_22120322120201MODE5.xml,Operational mode,
+2022-12-04 12:00:00,2022-12-04 23:59:58,3104,MODE1y,1,92500,True,[],STP-MTS-3104_22120422120201MODE1y.xml,Operational mode 1,
+2022-12-05 06:00:00,2022-12-05 17:59:58,3105,MODE1y,1,92500,True,[],STP-MTS-3105_22120522120201MODE1y.xml,Operational mode 1 with JPEG,
+2022-12-05 19:00:00,2022-12-05 23:00:00,3040,STAR,7,90000,False,[90000],STP-MTS-3040_22120522120507STAR.xml,,
+2022-12-06 00:00:00,2022-12-06 11:59:58,3105,MODE1y,1,92500,True,[],STP-MTS-3105_22120622120501MODE1y.xml,,
+2022-12-06 12:00:00,2022-12-06 14:00:00,3120,CROP,2,92500,False,[],STP-MTS-3120_22120622120502CROP.xml,,
+2022-12-06 18:00:00,2022-12-07 05:59:58,3105,MODE1y,2,92500,True,[],STP-MTS-3105_22120622120502MODE1y.xml,,
+2022-12-07 06:00:00,2022-12-07 17:59:58,3105,MODE1y,1,92500,True,[],STP-MTS-3105_22120722120501MODE1y.xml,,
+2022-12-08 00:00:00,2022-12-08 11:59:58,3106,MODE1y,1,92500,True,[],STP-MTS-3106_22120822120601MODE1y.xml,,
+2022-12-08 12:00:00,2022-12-08 23:59:58,3106,MODE1y,2,92500,True,[],STP-MTS-3106_22120822120602MODE1y.xml,,
