@@ -97,7 +97,6 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                 plt.pcolormesh(np.flip(ncols), nrows,
                                image, cmap=cmap,
                                vmax=vmax, vmin=vmin)
-                plt.gca().invert_xaxis()
 
             else:
                 plt.pcolormesh(image, cmap=cmap,
@@ -219,7 +218,6 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                     img = ax1.pcolormesh(np.flip(ncols), nrows,
                                          image, cmap=cmap,
                                          vmax=vmax, vmin=vmin)
-                    ax1.invert_xaxis()
 
                 else:
                     img = ax1.pcolormesh(image, cmap=cmap,
