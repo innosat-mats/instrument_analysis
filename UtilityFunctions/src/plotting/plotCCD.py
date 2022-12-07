@@ -7,6 +7,10 @@ import pandas as pd
 from geolocation import satellite as satellite
 from cartopy.feature.nightshade import Nightshade
 
+
+flipped_CCDs = ['IR1', 'IR3', 'UV1', 'UV2']
+
+
 def check_type(CCDitems):
     """Check format of CCDitems
     Exit program if type is not DataFrame
@@ -73,6 +77,13 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
             std = image.std()
             mean = image.mean()
 
+            if custom_cbar:
+                vmin = ranges[0]
+                vmax = ranges[1]
+            else:
+                vmax = mean+nstd*std
+                vmin = mean-nstd*std
+
             # orbital parameters
             (satlat, satlon, satLT,
              nadir_sza, nadir_mza,
@@ -80,13 +91,17 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
              TPLT, TPsza, TPssa) = satellite.get_position(CCD['EXP Date'])
 
             # plot CCD image
-            if custom_cbar:
-                plt.pcolormesh(image, cmap=cmap,
-                               vmax=ranges[1], vmin=ranges[0])
+            if channel in flipped_CCDs:
+                nrows = np.arange(0, CCD['NROW'])
+                ncols = np.arange(0, CCD['NCOL']+1)
+                plt.pcolormesh(np.flip(ncols), nrows,
+                               image, cmap=cmap,
+                               vmax=vmax, vmin=vmin)
+                plt.gca().invert_xaxis()
+
             else:
-                plt.pcolormesh(image, cmap='magma',
-                               vmax=mean+nstd*std, vmin=mean-nstd*std)
-            plt.colorbar(label='counts')
+                plt.pcolormesh(image, cmap=cmap,
+                               vmax=vmax, vmin=vmin)
 
             # print out additional information
             plt.figtext(0.1, 0.8, f'tpSZA: {TPsza:.6}',
@@ -157,6 +172,13 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                 std = image.std()
                 mean = image.mean()
 
+                if custom_cbar:
+                    vmin = ranges[0]
+                    vmax = ranges[1]
+                else:
+                    vmax = mean+nstd*std
+                    vmin = mean-nstd*std
+
                 # orbital parameters
                 (satlat, satlon,
                  satLT, nadir_sza,
@@ -191,13 +213,18 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                 ax.coastlines()
 
                 # plot CCD image
-                if custom_cbar:
-                    img = ax1.pcolormesh(image, cmap=cmap,
-                                         vmax=ranges[1], vmin=ranges[0])
+                if channel in flipped_CCDs:
+                    nrows = np.arange(0, CCD['NROW'])
+                    ncols = np.arange(0, CCD['NCOL']+1)
+                    img = ax1.pcolormesh(np.flip(ncols), nrows,
+                                         image, cmap=cmap,
+                                         vmax=vmax, vmin=vmin)
+                    ax1.invert_xaxis()
+
                 else:
-                    img = ax1.pcolormesh(image, cmap='magma',
-                                         vmax=mean+nstd*std,
-                                         vmin=mean-nstd*std)
+                    img = ax1.pcolormesh(image, cmap=cmap,
+                                         vmax=vmax, vmin=vmin)
+
                 ax1.set_title(f'ch: {channel}; time: '
                               + f'{exp_date}; TEXPMS: {texpms}')
                 fig.colorbar(img, ax=ax1)
