@@ -105,7 +105,7 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
             fig.clear()
 
 
-def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
+def orbit_plot(CCDitems, outdir, nstd=2, image_str='IMAGE', cmap='inferno', custom_cbar=False,
                ranges=[0, 1000], format='png'):
     """
        Generates plots from CCD items: image, histogram and map.
@@ -146,7 +146,8 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
 
                 # save parameters for plot
                 channel = CCD['channel']
-                image = CCD['IMAGE']
+                image = CCD[image_str]
+                [col, row] = image.shape
                 texpms = CCD['TEXPMS']
                 exp_date = CCD['EXP Date'].strftime("%Y-%m-%dT%H:%M:%S:%f")
 
@@ -154,8 +155,11 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                 outname = f"{CCD['Image File Name'][:-4]}_{index}"
 
                 # calc std and mean
-                std = image.std()
-                mean = image.mean()
+                mean = image[int(col/2-col*4/10):int(col/2+col*4/10), int(row/2-row*4/10):int(row/2+row*4/10)].mean()
+                std = image[int(col/2-col*4/10):int(col/2+col*4/10), int(row/2-row*4/10):int(row/2+row*4/10)].std()
+                
+                #std = image.std()
+                #mean = image.mean()
 
                 # orbital parameters
                 (satlat, satlon,
