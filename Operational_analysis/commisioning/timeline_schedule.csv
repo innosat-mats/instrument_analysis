@@ -46,7 +46,7 @@ Point at 50 km, take images with all channels with 16 and 32s integration time o
 2022-11-30 18:00:00,2022-12-01 05:59:58,3103,MODE1,3,92500,True,[],STP-MTS-3103_22113022112803MODE1.xml,Operational mode 1,"Mode 1. Operational binning, WDW128, TEXPUV = 5000, TEXPIR = 5000, TEXPBG = 1500, TEXPHO = 3000"
 2022-12-01 11:00:00,2022-12-01 13:00:00,3110,NADLMB,1,92500,False,[],STP-MTS-3110_22120222113001NADLMB.xml,Limb in Nadir,"Failed attempt at limb in nadir, satellitte did not turn"
 2022-12-01 14:10:00,2022-12-01 15:10:00,3110,NADLMB,1,92500,False,[],STP-MTS-3110_22120222113001NADLMB_2.xml,Limb in Nadir,"Failed attempt at limb in nadir, satellitte did not turn"
-2022-12-01 15:55:00,2022-12-01 16:25:00,3110,NADLMB,1,92500,False,[],STP-MTS-3110_22120222113001NADLMB_3.xml,Limb in Nadir,Sucessfully turned satellite to point in nadir. Full frame readouts. 
+2022-12-01 15:55:00,2022-12-01 17:55:00,3110,NADLMB,1,92500,False,[],STP-MTS-3110_22120222113001NADLMB_3.xml,Limb in Nadir,Sucessfully turned satellite to point in nadir. Full frame readouts. 
 2022-12-01 18:00:00,2022-12-01 23:59:58,3103,MODE1,4,92500,False,[],STP-MTS-3103_22120122113004MODE1.xml,Operational mode,"Mode 1. Operational binning, WDW128, TEXPUV = 5000, TEXPIR = 5000, TEXPBG = 1500, TEXPHO = 3000"
 2022-12-02 04:00:00,2022-12-02 05:00:00,3120,CROP,1,92500,False,[],STP-MTS-3120_22120222113001CROP.xml,Crop test,Full frame readout with full and half of image cropped in all channels
 2022-12-02 11:00:00,2022-12-02 14:29:58,3130,POL,1,92500,False,[],STP-MTS-3130_22120122113002POL.xml,Polarisation measurements,"Polarsisation measurements angling the satellite +-45 degree, ran in an intermediary bining mode"
