@@ -27,7 +27,7 @@ def check_type(CCDitems):
     return
 
 
-def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
+def simple_plot(CCDitems, outdir, nstd=2, plot_calibrated=False, cmap='inferno', custom_cbar=False,
                 ranges=[0, 1000], format='png'):
     """Generates plots from CCDitems with basic orbit parameters included.
     Images will be sorted in folders based on CCDSEL in directory specified.
@@ -40,6 +40,8 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
         Out directory
     nstd : int, optional
         number of standard deviations, by default 2
+    plot_calibrated : bool, optional
+        set to false if plotting calibrated img
     cmap : str, optional
        colormap for plot, by default 'inferno'
     custom_cbar : bool, optional
@@ -51,6 +53,11 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
     """
 
     check_type(CCDitems)
+
+    if plot_calibrated:
+        image_str = 'image_calibrated'
+    else:
+        image_str = 'IMAGE'
 
     fig = plt.figure(figsize=(12, 3))
 
@@ -66,7 +73,8 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
 
             # save parameters for plot
             channel = CCD['channel']
-            image = CCD['IMAGE']
+            image = CCD[image_str]
+            [col, row] = image.shape
             texpms = CCD['TEXPMS']
             exp_date = CCD['EXP Date'].strftime("%Y-%m-%dT%H:%M:%S:%f")
 
@@ -74,8 +82,10 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
             outname = f"{CCD['Image File Name'][:-4]}_{index}"
 
             # calc std and mean
-            std = image.std()
-            mean = image.mean()
+            mean = image[int(col/2-col*4/10):int(col/2+col*4/10),
+                         int(row/2-row*4/10):int(row/2+row*4/10)].mean()
+            std = image[int(col/2-col*4/10):int(col/2+col*4/10),
+                        int(row/2-row*4/10):int(row/2+row*4/10)].std()
 
             if custom_cbar:
                 vmin = ranges[0]
@@ -116,10 +126,10 @@ def simple_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
 
             # save figure
             plt.savefig(f'{outpath}/{outname}.{format}', format=format)
-            fig.clear()
+            plt.clear()
 
 
-def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
+def orbit_plot(CCDitems, outdir, nstd=2, plot_calibrated=False, cmap='inferno', custom_cbar=False,
                ranges=[0, 1000], format='png'):
     """
        Generates plots from CCD items: image, histogram and map.
@@ -133,7 +143,9 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
     outdir : str
         path where images will be saved
     nstd : int, optional
-        Number of standard deviations for cbar and histogram, by default 2
+        Number of standard deviations for cbar and histogram, by default 2'
+    plot_calibrated : bool, optional
+        default = False; option to plot calibrated img
     cmap : str, optional
         Colourmap for image, by default 'inferno'
     custom_cbar : bool, optional
@@ -145,6 +157,11 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
     """
 
     check_type(CCDitems)
+
+    if plot_calibrated:
+        image_str = 'image_calibrated'
+    else:
+        image_str = 'IMAGE'
 
     for CCDno in range(0, 8):
 
@@ -160,7 +177,8 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
 
                 # save parameters for plot
                 channel = CCD['channel']
-                image = CCD['IMAGE']
+                image = CCD[image_str]
+                [col, row] = image.shape
                 texpms = CCD['TEXPMS']
                 exp_date = CCD['EXP Date'].strftime("%Y-%m-%dT%H:%M:%S:%f")
 
@@ -168,8 +186,10 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                 outname = f"{CCD['Image File Name'][:-4]}_{index}"
 
                 # calc std and mean
-                std = image.std()
-                mean = image.mean()
+                mean = image[int(col/2-col*4/10):int(col/2+col*4/10),
+                             int(row/2-row*4/10):int(row/2+row*4/10)].mean()
+                std = image[int(col/2-col*4/10):int(col/2+col*4/10),
+                            int(row/2-row*4/10):int(row/2+row*4/10)].std()
 
                 if custom_cbar:
                     vmin = ranges[0]
@@ -254,6 +274,6 @@ def orbit_plot(CCDitems, outdir, nstd=2, cmap='inferno', custom_cbar=False,
                 ax2.grid()
                 plt.savefig(f'{outpath}/{outname}.{format}', format=format)
 
-                fig.clear()
+                plt.clear()
 
     return
