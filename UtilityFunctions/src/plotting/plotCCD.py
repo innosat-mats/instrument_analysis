@@ -126,7 +126,7 @@ def simple_plot(CCDitems, outdir, nstd=2, plot_calibrated=False, cmap='inferno',
 
             # save figure
             plt.savefig(f'{outpath}/{outname}.{format}', format=format)
-            plt.clear()
+            fig.clear()
 
 
 def orbit_plot(CCDitems, outdir, nstd=2, plot_calibrated=False, cmap='inferno', custom_cbar=False,
@@ -273,7 +273,6 @@ def orbit_plot(CCDitems, outdir, nstd=2, plot_calibrated=False, cmap='inferno', 
                 ax2.legend(loc='upper right')
                 ax2.grid()
                 plt.savefig(f'{outpath}/{outname}.{format}', format=format)
-
-                plt.clear()
+                fig.clear()
 
     return
