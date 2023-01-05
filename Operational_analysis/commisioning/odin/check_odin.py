@@ -9,8 +9,8 @@ schedule = pd.read_csv('/home/olemar/Projects/Universitetet/MATS/instrument_anal
 # start_time = DT.datetime.strptime(schedule[schedule.name=="ODIN1"].start_date.values[0],'%Y-%m-%d %H:%M:%S')
 # stop_time = DT.datetime.strptime(schedule[schedule.name=="ODIN1"].end_date.values[0],'%Y-%m-%d %H:%M:%S')
 
-start_time = DT.datetime.strptime('2022/12/13 19:00:00','%Y/%m/%d %H:%M:%S')
-stop_time = DT.datetime.strptime('2022/12/13 20:00:00','%Y/%m/%d %H:%M:%S')
+start_time = DT.datetime.strptime('2022/12/18 00:00:00','%Y/%m/%d %H:%M:%S')
+stop_time = DT.datetime.strptime('2022/12/20 20:00:00','%Y/%m/%d %H:%M:%S')
 
 
 #%%

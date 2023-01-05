@@ -8,7 +8,7 @@ from mats_l1_processing.L1_calibrate import L1_calibrate
 
 
 # %%
-directory='/home/olemar/Projects/Universitetet/MATS/instrument_analysis/Operational_analysis/commisioning/data/operational/'
+directory='/home/olemar/Projects/Universitetet/MATS/instrument_analysis/Operational_analysis/commisioning/data/operational_2/'
 #calibration_file='../calibration_data_linda.toml'
 
 _,df = read_CCDdata(directory)
