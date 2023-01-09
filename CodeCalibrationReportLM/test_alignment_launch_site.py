@@ -1,3 +1,4 @@
+#%%
   #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -18,8 +19,8 @@ import numpy as np
 #from jpeglib import read12bit_jpegfile
 from PIL import Image
 import warnings
-from mats_l1_processing.L1b_calibration_functions import shift_image
-
+#from mats_l1_processing.L1b_calibration_functions import shift_image
+from imagetools.imagetools import shift_image
 
 def plot_CCDimage_transp(image, fig, axis, title="", clim=999, aspect="auto", alpha=1):
     sp = axis.imshow(image, cmap="viridis", origin="lower", interpolation="none", alpha=alpha)
@@ -95,7 +96,7 @@ stop=deuterium_LFOV_stop
 #     CCDitem=CCDitems[i]
 #     ind=ind+1
 
-for ind, CCDitem in enumerate(CCDitems[left_side_covered_start:left_side_covered_stop]):
+for ind, CCDitem in enumerate(CCDitems[start:stop]):
     (
         image_lsb,
         image_bias_sub,
@@ -125,6 +126,9 @@ for ind, CCDitem in enumerate(CCDitems[left_side_covered_start:left_side_covered
     fig3.savefig('images/Alignment_all_'+str(start)+'_'+CCDitem['channel']+'.jpg')   
           
     sp=plot_CCDimage_transp(image_common_fov, fig2, ax2, title='All channels'+CCDitem['channel'], clim=fix_clim, alpha=0.3)    
+    textpos=np.argwhere(np.isfinite(image_common_fov))[0]
+    ax2.text(textpos[1], textpos[0], str(CCDitem['channel']) )
+    
     plt.show()
     fig2.savefig('images/Alignment_together_'+str(start)+'_'+CCDitem['channel']+'.jpg') 
     
