@@ -276,7 +276,7 @@ class Kernel:
 
 
 def apply_3d_kernel(field, x, y, z, fwhm, only_kernel=True,
-                    pp=True, n_jobs=16):
+                    pp=True, n_jobs=13):
     """
     Applies averaging kernels to a 3D field
 

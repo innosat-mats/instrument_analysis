@@ -1,5 +1,6 @@
-#%%
-  #!/usr/bin/env python3
+#%% 
+ 
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Mon Sep 19 21:00:16 2022
@@ -9,18 +10,18 @@ Created on Mon Sep 19 21:00:16 2022
 
 """
 
-
 from mats_l1_processing.experimental_utils import plot_CCDimage,read_all_files_in_protocol
 from  mats_l1_processing.experimental_utils import readprotocol
 from mats_l1_processing.instrument import Instrument
 from mats_l1_processing.L1_calibrate import L1_calibrate
+from imagetools.imagetools import shift_image
 import matplotlib.pyplot as plt
 import numpy as np
 #from jpeglib import read12bit_jpegfile
 from PIL import Image
 import warnings
 #from mats_l1_processing.L1b_calibration_functions import shift_image
-from imagetools.imagetools import shift_image
+
 
 def plot_CCDimage_transp(image, fig, axis, title="", clim=999, aspect="auto", alpha=1):
     sp = axis.imshow(image, cmap="viridis", origin="lower", interpolation="none", alpha=alpha)
@@ -67,9 +68,6 @@ instrument = Instrument(calibration_file)
 
 
 
-fig1, ax1 = plt.subplots(6, 1)
-fig2, ax2 = plt.subplots(1)
-fig3, ax3 = plt.subplots(6, 1)
 
 
 bottom_side_covered_start=13
@@ -95,6 +93,12 @@ stop=deuterium_LFOV_stop
 # for i in [23, 28]:
 #     CCDitem=CCDitems[i]
 #     ind=ind+1
+
+#%%
+
+fig1, ax1 = plt.subplots(6, 1)
+fig2, ax2 = plt.subplots(1)
+fig3, ax3 = plt.subplots(6, 1)
 
 for ind, CCDitem in enumerate(CCDitems[start:stop]):
     (
@@ -123,14 +127,17 @@ for ind, CCDitem in enumerate(CCDitems[start:stop]):
             
     plot_CCDimage(image_lsb, fig1, ax1[ind], CCDitem['channel'])    
     plot_CCDimage(image_common_fov, fig3, ax3[ind], title=str(start)+CCDitem['channel'], clim=fix_clim)  
-    fig3.savefig('images/Alignment_all_'+str(start)+'_'+CCDitem['channel']+'.jpg')   
+    fig3.savefig('images/Alignment_all_'+str(start)+'.jpg')   
           
     sp=plot_CCDimage_transp(image_common_fov, fig2, ax2, title='All channels'+CCDitem['channel'], clim=fix_clim, alpha=0.3)    
-    textpos=np.argwhere(np.isfinite(image_common_fov))[0]
-    ax2.text(textpos[1], textpos[0], str(CCDitem['channel']) )
-    
     plt.show()
-    fig2.savefig('images/Alignment_together_'+str(start)+'_'+CCDitem['channel']+'.jpg') 
+
+    
+    fig2.savefig('images/Alignment_together_'+str(start)+'.jpg') 
     
 
 #fig.savefig('Testfile.jpg')    
+
+
+
+# %%
