@@ -16,6 +16,7 @@ title = "Level 1 calibration files for testing this package"
 [darkcurrent]
     folder = "/Users/donal/projekt/SIW/MATS-L1-processing/calibration_data/MATS_CCD_DC_calibration_FINAL/"
     dc_2D_limit=0 
+    default_temp = 0
 [flatfield]
     flatfieldfolder = "/Users/donal/projekt/SIW/MATS-L1-processing/calibration_data/flatfields/"
     flatfieldfolder_cold_unprocessed = "/Users/donal/projekt/SIW/MATS-L1-processing/calibration_data/20200330_flatfields_0C/"
