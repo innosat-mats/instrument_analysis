@@ -65,18 +65,13 @@ def pix_deg(ccditem, xpixel, ypixel):
 
     
 #%% Select on explicit time
-start_time = DT.datetime(2023,1,27,17,0,0)
-stop_time = DT.datetime(2023,1,27,20,5,0)
-start_time = DT.datetime(2023,1,28,6,0,0)
-stop_time = DT.datetime(2023,1,28,11,5,0)
-start_time = DT.datetime(2023,2,17,0,0,0)
-stop_time = DT.datetime(2023,2,17,11,5,0)
-start_time = DT.datetime(2023,1,9,0,0,0)
-stop_time = DT.datetime(2023,1,9,1,5,0)
-df = read_MATS_data(start_time,stop_time,version='0.4')
+start_time = DT.datetime(2022,12,5,19,10,0)
+stop_time = DT.datetime(2022,12,5,20,15,0)
+df = read_MATS_data(start_time,stop_time,version='0.2')
 CCDitems = dataframe_to_ccd_items(df)
 #%%
 ccdnames=('IR1','IR4','IR3','IR2','UV1','UV2','NADIR')
+flip=(True,False,True,False,True,True,False)
 ir1=dataframe_to_ccd_items(df[df.CCDSEL==1])
 ir4=dataframe_to_ccd_items(df[df.CCDSEL==2])
 ir3=dataframe_to_ccd_items(df[df.CCDSEL==3])
@@ -85,15 +80,16 @@ uv1=dataframe_to_ccd_items(df[df.CCDSEL==5])
 uv2=dataframe_to_ccd_items(df[df.CCDSEL==6])
 #%%
 channels=[ir1,ir2,ir3,ir4,uv1,uv2]
-#for ch in channels:
-#    qprime=[(d['q0'],d['q1'],d['q2'],d['q3']) for d in qprimes if d['Channel'].decode('utf8')==ccdnames[ch[0]['CCDSEL']-1]]
-#    for ccditem in ch:
-#        ccditem['qprime']=np.array(qprime[0])
+# for ch in channels:
+#     qprime=[(d['q0'],d['q1'],d['q2'],d['q3']) for d in qprimes if d['Channel'].decode('utf8')==ccdnames[ch[0]['CCDSEL']-1]]
+#     for ccditem in ch:
+#         ccditem['qprime']=np.array(qprime[0])
 #%%
-plt.figure(figsize=[4,2])
-n=10
-image=ir2[n]['IMAGE']
-#image=uv1[n]['IMAGE']
+ch=ir3
+plt.figure(figsize=[6,4])
+n=0
+image=ch[n]['IMAGE']
+if (flip[ch[n]['CCDSEL'] - 1]) : image=np.fliplr(image)
 plt.imshow(image,origin='lower')
 [col, row]=image.shape
 mean = image[int(col/2-col*4/10):int(col/2+col*4/10), int(row/2-row*4/10):int(row/2+row*4/10)].mean()
@@ -115,7 +111,6 @@ all = [k for k,v in globals().items() if type(v) is MT and not k.startswith('__'
 #%%
 #n=494 #wird nlc
 n=0
-n=100
 plt.close('all')
 ir1cal=calibrate(ir1[n],instrument)
 ir2cal=calibrate(ir2[n],instrument)
@@ -124,10 +119,10 @@ ir4cal=calibrate(ir4[n],instrument)
 uv1cal=calibrate(uv1[n],instrument)
 uv2cal=calibrate(uv2[n],instrument)
 # %%
-plt.figure(figsize=[4,2])
-plt.imshow(ir2cal,origin='lower')
+plt.figure(figsize=[6,3])
+plt.imshow(uv1cal,origin='lower')
 plt.gca().axis("auto")
-plt.clim([0,150])
+plt.clim([0,700])
 plt.colorbar()
 # %%
 plt.figure(figsize=[4,2])
