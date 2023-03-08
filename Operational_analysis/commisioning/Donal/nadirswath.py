@@ -34,7 +34,7 @@ table = dataset.to_table(
     filter=(
         ds.field('time') > pd.to_datetime('2023-1-06T0:0:0z').to_datetime64()
     ) & (
-        ds.field('time') < pd.to_datetime('2023-2-07T0:0z').to_datetime64()
+        ds.field('time') < pd.to_datetime('2023-1-07T0:0z').to_datetime64()
     )
 )
 
@@ -119,7 +119,9 @@ for i in range(npoints):
 
 # %%
 plt.figure()
-plt.scatter([rlons[0:npoints],clons[0:npoints],llons[0:npoints]],[rlats[0:npoints],clats[0:npoints],llats[0:npoints]],c=[szar,szac,szal],s=2)
+plt.scatter([rlons[0:npoints],clons[0:npoints],llons[0:npoints]],
+            [rlats[0:npoints],clats[0:npoints],llats[0:npoints]],
+            c=[szar,szac,szal],s=2,cmap='Wistia')
 plt.colorbar()
 plt.ylabel('Latitude')
 plt.xlabel('Longitude')
