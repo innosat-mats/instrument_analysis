@@ -32,14 +32,14 @@ dataset = ds.dataset(
 
 table = dataset.to_table(
     filter=(
-        ds.field('time') > pd.to_datetime('2023-2-28T0:0:0z').to_datetime64()
+        ds.field('time') > pd.to_datetime('2023-1-06T0:0:0z').to_datetime64()
     ) & (
-        ds.field('time') < pd.to_datetime('2023-3-01T0:0z').to_datetime64()
+        ds.field('time') < pd.to_datetime('2023-2-07T0:0z').to_datetime64()
     )
 )
 
 df = table.to_pandas()
-df
+df=df.iloc[range(0,len(df),10)]
 
 # %%
 q=np.vstack(df.afsAttitudeState)
@@ -48,7 +48,9 @@ q=np.vstack(df.afsAttitudeState)
 npoints=len(df)
 instaxis=np.array([0, 0, -1])
 metoOHB  = R.from_matrix([[0,0,-1],[0,-1,0],[-1,0,0]])
-nadcam = R.from_euler('XYZ', [0, -(90-225),0], degrees=True).apply([1, 0, 0])
+nadcam = R.from_euler('XYZ', [0, -(90-23),0], degrees=True).apply([1, 0, 0])
+nadcamr= R.from_euler('XYZ', [12.2, -(90-23),0], degrees=True).apply([1, 0, 0])
+nadcaml= R.from_euler('XYZ', [-12.2, -(90-23),0], degrees=True).apply([1, 0, 0])
 ts=sfapi.load.timescale()
 
 def funheight(s, t, pos, FOV):
@@ -64,98 +66,62 @@ def findsurface(t, pos, FOV):
 #%%
 heights=np.zeros(npoints)
 satheights=np.zeros(npoints)
-points=[]
+cpoints=[]
+lpoints=[]
+rpoints=[]
 for i in range (npoints):
-    t=ts.from_datetime(df.time[i].replace(tzinfo=sfapi.utc))   
+    t=ts.from_datetime(df.time.iloc[i].replace(tzinfo=sfapi.utc))   
     quat=R.from_quat(np.roll(q[i,:],-1))
     FOVn=quat.apply(metoOHB.apply(nadcam))
-    pos=df.afsGnssStateJ2000[i][0:3]
+    FOVl=quat.apply(metoOHB.apply(nadcaml))
+    FOVr=quat.apply(metoOHB.apply(nadcamr))
+    pos=df.afsGnssStateJ2000.iloc[i][0:3]
     satheights[i]=wgs84.subpoint(ICRF(Distance(m=pos).au, t=t, center=399)).elevation.m
     res=findsurface(t,pos,FOVn)
     heights[i]=res.x
     newp = pos + res.x * FOVn
     newp = ICRF(Distance(m=newp).au, t=t, center=399)
-    points.append(newp)
+    cpoints.append(newp)
+    res=findsurface(t,pos,FOVl)
+    heights[i]=res.x
+    newp = pos + res.x * FOVl
+    newp = ICRF(Distance(m=newp).au, t=t, center=399)
+    lpoints.append(newp)
+    res=findsurface(t,pos,FOVr)
+    heights[i]=res.x
+    newp = pos + res.x * FOVr
+    newp = ICRF(Distance(m=newp).au, t=t, center=399)
+    rpoints.append(newp)
 
-
-# %%
-plt.close('all')
-plt.figure(figsize=[7,5])
-plt.plot(RAs,Decs,'+')
-plt.plot(RAs[0:15],Decs[0:15],'r+')
-plt.plot(*xyz2radec(np.expand_dims(meanvec,axis=1),deg=True),'bo')
-plt.xlabel('Ra (deg)')
-plt.ylabel('Dec (deg)')
-
-# %%
-
-plt.figure(figsize=(6,3))
-
-
-plt.plot(df.time[:npoints],RAs)
-ax1=plt.gca()
-ax2 = ax1.twinx()
-ax2.plot(df.time[:npoints],Decs,'r.')
-plt.gcf().autofmt_xdate()
-ax1.set_ylabel('Ra')
-ax2.set_ylabel('Dec', color='r')
-
-# %%
-mask=(df.time>datetime(2022,12,30,6,15,23)) & (df.time<datetime(2022,12,30,6,15,23)+timedelta(milliseconds=15000))
-np.vstack(df[mask].afsAttitudeState).mean(axis=0)
-
-# %%
-coordinates.meanquaternion(datetime(2022,12,30,6,15,23),timedelta(milliseconds=15000))
-
-# %%
-plt.figure()
-plt.hist(angles,list(np.linspace(0,0.35,18)))
-plt.ylabel('Number of points')
-plt.xlabel('Arc minutes')
-
-# %%
-pixelmap=np.zeros((21,21))
-dispersion=6.06 / 2047*60   # arcmin/pix
-
-# %%
-dispersion
-
-# %%
-np.linspace(0,0.35,36)
-
-# %%
-
-dataset = ds.dataset(
-    "ops-platform-level1a-v0.3/ReconstructedData",
-    filesystem=s3,
-    #ignore_prefixes=['PreciseAttitude', 'HK', 'TM', 'sco']
-    #ignore_prefixes=['PreciseOrbitEstimation', 'HK', 'TM', 'sco']
-
-)
-
-table = dataset.to_table(
-    filter=(
-        ds.field('time') > pd.to_datetime('2023-2-13T12:00z').to_datetime64()
-    ) & (
-        ds.field('time') < pd.to_datetime('2023-2-15T12:00z').to_datetime64()
-    )
-)
 
 
 
 # %%
-df = table.to_pandas()
+clats=[wgs84.subpoint(t).latitude.degrees for t in cpoints]
+rlats=[wgs84.subpoint(t).latitude.degrees for t in rpoints]
+llats=[wgs84.subpoint(t).latitude.degrees for t in lpoints]
+clons=[wgs84.subpoint(t).longitude.degrees for t in cpoints]
+rlons=[wgs84.subpoint(t).longitude.degrees for t in rpoints]
+llons=[wgs84.subpoint(t).longitude.degrees for t in lpoints]
+# %%
+planets = sfapi.load('de421.bsp')
+earth=planets['Earth']
+sun=planets['Sun']
+npoints=600
+szal=np.zeros(npoints)
+szac=np.zeros(npoints)
+szar=np.zeros(npoints)
+for i in range(npoints):
+    t=ts.from_datetime(df.time.iloc[i].replace(tzinfo=sfapi.utc))  
+    szal[i]=90-((earth+wgs84.subpoint(lpoints[i])).at(t).observe(sun).apparent().altaz())[0].degrees
+    szac[i]=90-((earth+wgs84.subpoint(cpoints[i])).at(t).observe(sun).apparent().altaz())[0].degrees    
+    szar[i]=90-((earth+wgs84.subpoint(rpoints[i])).at(t).observe(sun).apparent().altaz())[0].degrees
 
 # %%
 plt.figure()
-
-plt.plot(df.time,df.afsTangentH_wgs84)
-plt.gcf().autofmt_xdate()
-
+plt.scatter([rlons[0:npoints],clons[0:npoints],llons[0:npoints]],[rlats[0:npoints],clats[0:npoints],llats[0:npoints]],c=[szar,szac,szal],s=2)
+plt.colorbar()
+plt.ylabel('Latitude')
+plt.xlabel('Longitude')
+plt.title('2023-01-06')
 # %%
-df
-
-# %%
-
-
-
