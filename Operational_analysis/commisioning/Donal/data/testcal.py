@@ -73,7 +73,9 @@ start_time = DT.datetime(2023,2,17,0,0,0)
 stop_time = DT.datetime(2023,2,17,11,5,0)
 start_time = DT.datetime(2023,1,9,0,0,0)
 stop_time = DT.datetime(2023,1,9,1,5,0)
-df = read_MATS_data(start_time,stop_time,version='0.4')
+#start_time = DT.datetime(2023,3,6,7,30,0)
+#stop_time = DT.datetime(2023,3,6,7,40,0)
+df = read_MATS_data(start_time,stop_time,version='0.5')
 CCDitems = dataframe_to_ccd_items(df)
 #%%
 ccdnames=('IR1','IR4','IR3','IR2','UV1','UV2','NADIR')
@@ -115,7 +117,7 @@ all = [k for k,v in globals().items() if type(v) is MT and not k.startswith('__'
 #%%
 #n=494 #wird nlc
 n=0
-n=100
+n=150
 plt.close('all')
 ir1cal=calibrate(ir1[n],instrument)
 ir2cal=calibrate(ir2[n],instrument)
