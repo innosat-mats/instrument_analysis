@@ -6,12 +6,16 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timezone,timedelta
 import matplotlib.pylab as plt
+import matplotlib as mpl
 from scipy.spatial.transform import Rotation as R
+from scipy.interpolate import CubicSpline
+from scipy.optimize import fsolve
 from tangentlib import *
 import mats_utils.geolocation.coordinates as coordinates
 from skyfield import api as sfapi
 from skyfield.framelib import itrs
 from skyfield.positionlib import Geocentric
+
 %matplotlib widget
 
 # %%
@@ -32,9 +36,9 @@ dataset = ds.dataset(
 
 table = dataset.to_table(
     filter=(
-        ds.field('time') > pd.to_datetime('2023-1-06T0:0:0z').to_datetime64()
+        ds.field('time') > pd.to_datetime('2023-3-07T0:0:0z').to_datetime64()
     ) & (
-        ds.field('time') < pd.to_datetime('2023-1-07T0:0z').to_datetime64()
+        ds.field('time') < pd.to_datetime('2023-3-08T0:0z').to_datetime64()
     )
 )
 
@@ -97,12 +101,12 @@ for i in range (npoints):
 
 
 # %%
-clats=[wgs84.subpoint(t).latitude.degrees for t in cpoints]
-rlats=[wgs84.subpoint(t).latitude.degrees for t in rpoints]
-llats=[wgs84.subpoint(t).latitude.degrees for t in lpoints]
-clons=[wgs84.subpoint(t).longitude.degrees for t in cpoints]
-rlons=[wgs84.subpoint(t).longitude.degrees for t in rpoints]
-llons=[wgs84.subpoint(t).longitude.degrees for t in lpoints]
+clats=[wgs84.subpoint(p).latitude.degrees for p in cpoints]
+rlats=[wgs84.subpoint(p).latitude.degrees for p in rpoints]
+llats=[wgs84.subpoint(p).latitude.degrees for p in lpoints]
+clons=[wgs84.subpoint(p).longitude.degrees for p in cpoints]
+rlons=[wgs84.subpoint(p).longitude.degrees for p in rpoints]
+llons=[wgs84.subpoint(p).longitude.degrees for p in lpoints]
 # %%
 planets = sfapi.load('de421.bsp')
 earth=planets['Earth']
@@ -119,11 +123,33 @@ for i in range(npoints):
 
 # %%
 plt.figure()
+mycolormap=mpl.colormaps['copper'].reversed()
 plt.scatter([rlons[0:npoints],clons[0:npoints],llons[0:npoints]],
             [rlats[0:npoints],clats[0:npoints],llats[0:npoints]],
-            c=[szar,szac,szal],s=2,cmap='Wistia')
+            c=[szar,szac,szal],s=2,cmap=mycolormap,norm=mpl.colors.CenteredNorm(97))
 plt.colorbar()
 plt.ylabel('Latitude')
 plt.xlabel('Longitude')
-plt.title('2023-01-06')
+plt.title('Nadir Camera SZA '+t.utc_strftime("%Y-%m-%d") )
+# %%
+mycolormap=mpl.colormaps['coolwarm'].reversed()
+# %%
+t.utc_strftime("%Y-%m-%d")
+# %%
+plt.figure()
+plt.plot(szal,llats[0:npoints],szac,clats[0:npoints],szar,rlats[0:npoints])
+#plt.arrow(0, f(0), 0.01, f(0.01)-f(0), shape='full', lw=0, length_includes_head=True, head_width=.05)
+plt.xlim([70,110])
+plt.ylim([-90,90])    
+plt.ylabel('Latitude')
+plt.xlabel('Solar zenith angle')
+plt.title('Nadir Camera SZA '+t.utc_strftime("%Y-%m-%d") )
+plt.legend(['Left','Centre','Right'])
+clinecolour=plt.gca().get_lines()[1].get_color()
+for i in range(npoints-1):
+    if clats[i]*clats[i+1] < 0 : #sign change
+        print(clats[i])
+        plt.arrow(szac[i], clats[i], szac[i+1]-szac[i], clats[i+1]-clats[i], 
+                  shape='full', lw=0, length_includes_head=True, head_width=1,color=clinecolour)
+
 # %%
