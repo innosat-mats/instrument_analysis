@@ -1,0 +1,33 @@
+# This document defines the position of various files used for the calibration of MATS data. 
+
+
+title = "Level 1 calibration files for testing this package"
+
+#Folders and parameters for generating the calibration database
+[primary_data]
+    [primary_data.linearity]
+        folder = "/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/binning_test_20200812/RacFiles_out/"
+        starttime = ""
+        endtime = ""
+        fittype = 'threshold2'
+        remove_blanks = 'true'
+ 
+#Folders and parameters for performing calibration
+[darkcurrent]
+    folder = "/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/MATS_CCD_DC_calibration_FINAL/"
+    dc_2D_limit=0 
+    default_temp = 0
+[flatfield]
+    flatfieldfolder = "/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/flatfields/"
+    flatfieldfolder_cold_unprocessed = "/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/20200330_flatfields_0C/"
+    baffle_flatfield = "/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/Flatfield20210421/PayloadImages/"
+[linearity]
+    pixel = '/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/linearity/final/linearity_exp'
+    sumrow = '/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/linearity/final/linearity_row'
+    sumwell = '/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/linearity/final/linearity_col'
+    tables = '/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/linearity/tables/20220906/'
+[abs_rel_calib]
+	abs_rel_calib_constants= "/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/abs_rel_calib/abs_rel_calib_constants.csv"
+[pointing]
+    qprime = '/home/olemar/Projects/Universitetet/MATS/MATS-L1-processing/calibration_data/pointing/'
+
